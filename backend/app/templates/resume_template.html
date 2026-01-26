@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Resume</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0.4in;
+            /* Maximum Space for Text */
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 10pt;
+            /* Optimal for single page */
+            line-height: 1.1;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1em;
+        }
+
+        .name {
+            font-size: 20pt;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-info {
+            font-size: 9pt;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            font-size: 10.5pt;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+            margin-top: 12px;
+            margin-bottom: 5px;
+            padding-bottom: 1px;
+            font-weight: bold;
+        }
+
+        h3 {
+            font-size: 11pt;
+            font-weight: bold;
+            margin: 0;
+            display: inline-block;
+        }
+
+        .sub {
+            font-style: italic;
+            float: right;
+            font-size: 10pt;
+        }
+
+        ul {
+            margin: 2px 0 8px 0;
+            padding-left: 1.2em;
+        }
+
+        li {
+            margin-bottom: 2px;
+            text-align: justify;
+        }
+
+        .skills-list {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="name">Yash Desai</div>
+        <div class="contact-info">
+            Gen AI Engineer • Portfolio Link • user@example.com
+        </div>
+    </div>
+
+    <!-- Summary -->
+    {% if summary %}
+    <h2>Professional Summary</h2>
+    <div style="text-align: justify;">
+        {{ summary }}
+    </div>
+    {% endif %}
+
+    <!-- Skills -->
+    <h2>Technical Skills</h2>
+    <div class="skills-list">
+        <p style="margin: 0;">
+            {% for skill in skills %}
+            <span style="display:inline-block; margin-right: 4px;"><strong>{{ skill }}</strong>{% if not loop.last %} •
+                {% endif %}</span>
+            {% endfor %}
+        </p>
+    </div>
+
+    <!-- Projects -->
+    <h2>Selected Projects</h2>
+    {% for project in projects %}
+    <div style="margin-bottom: 8px; page-break-inside: avoid;">
+        <div>
+            <h3>{{ project.name }}</h3>
+            <span class="sub">{{ project.tech_stack }}</span>
+        </div>
+        <ul>
+            {% for point in project.bullet_points %}
+            <li>{{ point }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+
+    <!-- Certifications -->
+    <h2>Certifications</h2>
+    <ul style="list-style-type: none; padding: 0; margin: 0;">
+        {% for cert in certifications %}
+        <li><strong>{{ cert.name }}</strong>, {{ cert.provider }} ({{ cert.date }})</li>
+        {% endfor %}
+    </ul>
+
+</body>
+
+</html>

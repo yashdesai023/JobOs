@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Resume</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            font-size: 10pt;
+            line-height: 1.4;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: #0e7490;
+            /* Teal-700 */
+            color: #ffffff;
+            padding: 35px 40px;
+        }
+
+        .name {
+            font-size: 26pt;
+            font-weight: normal;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .contact {
+            font-size: 10pt;
+            color: #e0f2fe;
+            /* Light Blue */
+        }
+
+        .contact span {
+            margin-right: 15px;
+        }
+
+        .contact a {
+            color: #e0f2fe;
+            text-decoration: none;
+        }
+
+        /* CONTENT CONTAINER */
+        .container {
+            padding: 30px 40px;
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            border-bottom: 2px solid #0e7490;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            color: #0e7490;
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .section-icon {
+            display: inline-block;
+            background-color: #0e7490;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            font-size: 10pt;
+        }
+
+        /* TABLES FOR LAYOUT (xhtml2pdf safe) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            /* margin-bottom: 10px; */
+        }
+
+        td {
+            vertical-align: top;
+            padding-bottom: 10px;
+        }
+
+        /* Left Label Column (for 'Internships', 'Projects' labels) */
+        .label-col {
+            width: 18%;
+            font-weight: bold;
+            color: #4b5563;
+            padding-right: 10px;
+            font-size: 9.5pt;
+        }
+
+        .content-col {
+            width: 82%;
+        }
+
+        /* ITEMS */
+        .item-title {
+            font-weight: bold;
+            color: #1f2937;
+            font-size: 10.5pt;
+        }
+
+        .item-meta {
+            font-size: 9pt;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .tech-stack {
+            font-size: 8.5pt;
+            color: #0e7490;
+            background-color: #ecfeff;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* LISTS */
+        ul {
+            margin: 4px 0 10px 0;
+            padding-left: 1.2em;
+        }
+
+        li {
+            margin-bottom: 2px;
+            text-align: justify;
+            font-size: 9.5pt;
+        }
+
+        /* SKILLS CHIPS */
+        .skill-chip {
+            display: inline-block;
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 3px 10px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-size: 9pt;
+            color: #374151;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="name">Yash Desai</div>
+        <div class="contact">
+            <span>📞 +91-XXXXX-XXXXX</span>
+            <span>✉️ user@example.com</span>
+            <span>📍 Mumbai, India</span>
+            <span>🔗 <a href="#">Portfolio Link</a></span>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Profile / Summary -->
+        
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">👤</span> Professional Profile
+            </div>
+            <div style="text-align: justify; color: #4b5563;">
+                Highly motivated professional seeking a role in prompt engineering, with a strong foundation in linguistics and computer science. Proficient in designing and developing effective text prompts for AI models, with a keen interest in staying updated on the latest advancements in AI, NLP, and prompt engineering. Collaborative team player with excellent communication and problem-solving skills, eager to contribute to the development of AI-powered products and services.
+            </div>
+        </div>
+        
+
+        <!-- Skills -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🛠️</span> Technical Skills
+            </div>
+            <div>
+                
+                <span class="skill-chip">Prompt Engineering</span>
+                
+                <span class="skill-chip">Natural Language Processing (NLP)</span>
+                
+                <span class="skill-chip">Artificial Intelligence (AI)</span>
+                
+                <span class="skill-chip">Machine Learning</span>
+                
+                <span class="skill-chip">Linguistics</span>
+                
+                <span class="skill-chip">Cognitive Science</span>
+                
+                <span class="skill-chip">Conversational AI</span>
+                
+                <span class="skill-chip">Text Prompt Design</span>
+                
+                <span class="skill-chip">AI Model Optimization</span>
+                
+                <span class="skill-chip">Collaboration Tools</span>
+                
+            </div>
+        </div>
+
+        <!-- Experience / Internships -->
+        
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🚀</span> Work &amp; Projects
+            </div>
+
+            <table>
+                
+                <tr>
+                    <!-- Left Label: Dynamically set based on type if avail, else 'Project' -->
+                    <td class="label-col">
+                        Project 1
+                    </td>
+                    <td class="content-col">
+                        <div class="item-title">
+                            AI-Powered Chatbot
+                            <span style="float:right; font-weight:normal; font-size:9pt; color:#666;">Nov 2025 -
+                                Present</span>
+                        </div>
+                        <div style="margin-bottom:4px;">
+                            <span class="tech-stack"></span>
+                        </div>
+                        <ul>
+                            
+                            <li>Designed and developed text prompts to elicit specific and accurate responses from the chatbot's AI model.</li>
+                            
+                            <li>Collaborated with a cross-functional team to integrate the prompts into the chatbot, resulting in a 25% increase in user engagement.</li>
+                            
+                            <li>Refined and optimized prompts through iterative testing, improving the chatbot's response quality by 30%.</li>
+                            
+                        </ul>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <!-- Left Label: Dynamically set based on type if avail, else 'Project' -->
+                    <td class="label-col">
+                        Project 2
+                    </td>
+                    <td class="content-col">
+                        <div class="item-title">
+                            Language Model Tuning
+                            <span style="float:right; font-weight:normal; font-size:9pt; color:#666;">Nov 2025 -
+                                Present</span>
+                        </div>
+                        <div style="margin-bottom:4px;">
+                            <span class="tech-stack"></span>
+                        </div>
+                        <ul>
+                            
+                            <li>Conducted research on the latest advancements in language models and their applications in prompt engineering.</li>
+                            
+                            <li>Developed and implemented a method to fine-tune a pre-trained language model for improved prompt responsiveness, achieving a 20% increase in model accuracy.</li>
+                            
+                            <li>Documented best practices and guidelines for language model tuning, which were adopted by the team for future projects.</li>
+                            
+                        </ul>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <!-- Left Label: Dynamically set based on type if avail, else 'Project' -->
+                    <td class="label-col">
+                        Project 3
+                    </td>
+                    <td class="content-col">
+                        <div class="item-title">
+                            Conversational AI Interface
+                            <span style="float:right; font-weight:normal; font-size:9pt; color:#666;">Nov 2025 -
+                                Present</span>
+                        </div>
+                        <div style="margin-bottom:4px;">
+                            <span class="tech-stack"></span>
+                        </div>
+                        <ul>
+                            
+                            <li>Participated in the design and development of a conversational AI interface, focusing on creating intuitive and effective text prompts for user interaction.</li>
+                            
+                            <li>Worked closely with data scientists to analyze user feedback and refine the interface, leading to a 40% reduction in user errors.</li>
+                            
+                            <li>Contributed to the development of documentation for the conversational AI interface, ensuring clarity and usability for future development teams.</li>
+                            
+                        </ul>
+                    </td>
+                </tr>
+                
+            </table>
+        </div>
+        
+
+        <!-- Certifications -->
+        
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📜</span> Certifications
+            </div>
+            <table>
+                
+                <tr>
+                    <td class="label-col">
+                        2025-02-23 00:00:00.000Z
+                    </td>
+                    <td class="content-col">
+                        <strong>AWS</strong> <br>
+                        <span style="color: #666;">AWS</span>
+                    </td>
+                </tr>
+                
+            </table>
+        </div>
+        
+
+        <!-- Education (Static Placeholder to match look) -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎓</span> Education
+            </div>
+            <table>
+                <tr>
+                    <td class="label-col">Graduation</td>
+                    <td class="content-col">
+                        <strong>B.Tech/B.E. (Computers)</strong><br>
+                        Nutan College of Engineering and Research, Pune <br>
+                        <span style="color: #666;">Status: Ongoing</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

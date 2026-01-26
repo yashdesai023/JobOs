@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+phidata
+groq
+python-dotenv
+requests
+sqlalchemy
+apscheduler
+duckduckgo-search
+jinja2
+xhtml2pdf
+pocketbase
