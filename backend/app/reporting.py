@@ -5,8 +5,12 @@ from xhtml2pdf import pisa
 from pocketbase import PocketBase
 
 # Initialize PocketBase (Use Env Var for Cloud, fallback to Localhost)
+# Initialize PocketBase (Use Env Var for Cloud, fallback to Localhost)
 PB_URL = os.getenv("POCKETBASE_URL", "http://127.0.0.1:8090")
 pb = PocketBase(PB_URL)
+
+from .services.email_service import EmailService
+email_service = EmailService()
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'generated_reports')
@@ -94,6 +98,31 @@ def generate_job_report(jobs: list, metadata: dict):
     except Exception as e:
         print(f"⚠️ Failed to upload to PocketBase (Ensure 'job_reports' collection exists): {e}")
 
+    # 4. Send Email Notification
+    if record_id:
+        try:
+            receiver = os.getenv("EMAIL_RECEIVER", "desaisyash1000@gmail.com")
+            # Construct Download Link: {PB_URL}/api/files/{collection}/{id}/{filename}
+            download_link = f"{PB_URL}/api/files/job_reports/{record_id}/{os.path.basename(pdf_path)}"
+            
+            # Render Email Template
+            email_template = env.get_template('email_marketing.html')
+            email_html = email_template.render({
+                "title": "Mission Report Ready",
+                "message": f"Hunter has completed the scan. Found {len(jobs)} active opportunities matching your profile ({metadata.get('role')}).",
+                "stats": {"Role": metadata.get('role'), "Jobs": len(jobs), "Status": "Success"},
+                "download_link": download_link,
+                "receiver": receiver
+            })
+            
+            email_service.send_notification(
+                receiver_email=receiver,
+                subject=f"🚀 Mission Report: {len(jobs)} Jobs Found",
+                html_content=email_html
+            )
+        except Exception as e:
+            print(f"⚠️ Failed to send email: {e}")
+
     return {
         "pdf_path": pdf_path,
         "html_path": html_path,
@@ -146,6 +175,29 @@ def generate_resume_pdf(resume_data: dict, job_title: str, style: str = "harvard
                  print(f"Failed to upload resume: {response.text}")
     except Exception as e:
         print(f"Error uploading resume: {e}")
+
+    # 3. Send Email Notification
+    if record_id:
+        try:
+            receiver = os.getenv("EMAIL_RECEIVER", "desaisyash1000@gmail.com")
+            download_link = f"{PB_URL}/api/files/resume_generated/{record_id}/{os.path.basename(pdf_path)}"
+            
+            email_template = env.get_template('email_marketing.html')
+            email_html = email_template.render({
+                "title": "Resume Generated",
+                "message": f"Your tailored resume for '{job_title}' is ready. Optimized for ATS parsing and readability.",
+                "stats": {"Target Role": job_title, "Style": style, "Type": "PDF"},
+                "download_link": download_link,
+                "receiver": receiver
+            })
+            
+            email_service.send_notification(
+                receiver_email=receiver,
+                subject=f"📄 Resume Ready: {job_title}",
+                html_content=email_html
+            )
+        except Exception as e:
+             print(f"⚠️ Failed to send resume email: {e}")
 
     return {
         "pdf_path": pdf_path,

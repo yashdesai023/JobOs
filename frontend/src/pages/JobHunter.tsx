@@ -34,7 +34,10 @@ export default function JobHunter() {
     const handleTriggerHunt = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/trigger-hunt', {
+import { API_BASE_URL } from '../lib/api';
+
+// ...
+            const response = await fetch(`${API_BASE_URL}/api/trigger-hunt`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

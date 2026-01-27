@@ -4,8 +4,8 @@ echo           Starting JobOs System 🚀
 echo ===================================================
 
 :: 1. Start Backend Server (FastAPI)
-echo Starting Backend (Port 8000)...
-start "JobOs Backend" cmd /k "cd backend && venv\Scripts\activate && python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000"
+:: echo Starting Backend (Port 8000)...
+:: start "JobOs Backend" cmd /k "cd backend && venv\Scripts\activate && python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000"
 
 :: 2. Start Frontend (Vite/React)
 echo Starting Frontend (Port 5173)...

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobOs Notification</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #0f0f0f;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #222;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Textured Header */
+        .header {
+            background:
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.4) 0%, transparent 40%),
+                linear-gradient(135deg, #1a0b2e 0%, #0d1226 100%);
+            padding: 60px 40px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        /* Subtle Grid Pattern Overlay */
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #a78bfa;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #a1a1aa;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Stats Grid - Using Table for Email Compatibility */
+        .stats-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 10px;
+            margin-bottom: 40px;
+        }
+
+        .stat-cell {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            width: 33.33%;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+        }
+
+        /* Special highlighting for middle stat */
+        .stat-cell.highlight {
+            background-color: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .stat-cell.highlight .stat-value {
+            color: #c4b5fd;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 18px 48px;
+            background: linear-gradient(90deg, #7c3aed 0%, #2563eb 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        .footer {
+            padding: 40px;
+            background-color: #050505;
+            text-align: center;
+            font-size: 13px;
+            color: #555;
+            border-top: 1px solid #222;
+        }
+
+        .footer-logo {
+            font-weight: 700;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+
+        .footer a {
+            color: #666;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer a:hover {
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Textured Hero Header -->
+        <div class="header">
+            <span class="header-badge">System Notification</span>
+            <h1>JobOs Intelligence</h1>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <h2 class="title">{{ title }}</h2>
+            <p class="message">{{ message }}</p>
+
+            <!-- Stats Grid Table -->
+            {% if stats %}
+            <table class="stats-table" role="presentation">
+                <tr>
+                    {% for key, value in stats.items() %}
+                    <!-- Naive loop; usually best to specific keys, but this works for dynamic dicts -->
+                    <td class="stat-cell {% if loop.index == 2 %}highlight{% endif %}">
+                        <span class="stat-label">{{ key }}</span>
+                        <span class="stat-value">{{ value }}</span>
+                    </td>
+                    {% endfor %}
+                </tr>
+            </table>
+            {% endif %}
+
+            <!-- CTA -->
+            <a href="{{ download_link }}" class="button">Access Asset</a>
+        </div>
+
+        <!-- Expanded Footer -->
+        <div class="footer">
+            <span class="footer-logo">JobOs &bull; AI</span>
+            <p>Empowering your career with Neural Intelligence.</p>
+            <p style="margin-top: 20px; font-size: 11px;">
+                <a href="#">Dashboard</a> &bull;
+                <a href="#">Job Hunter</a> &bull;
+                <a href="#">Skill Nexus</a>
+            </p>
+            <p style="margin-top: 20px; color: #333;">
+                Sent automatically to {{ receiver }}<br>
+                JobOs System &copy; 2026. All systems operational.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -144,7 +144,10 @@ export default function Playground() {
         setMessages(currentMsgs);
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/chat', {
+            import { API_BASE_URL } from '../lib/api';
+
+            // ...
+            const response = await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
