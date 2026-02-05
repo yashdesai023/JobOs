@@ -6,6 +6,8 @@ import Navbar from '../components/Navbar';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+import { API_BASE_URL } from '../lib/api';
+
 interface Message {
     role: 'user' | 'assistant';
     content: string;
@@ -144,7 +146,7 @@ export default function Playground() {
         setMessages(currentMsgs);
 
         try {
-            import { API_BASE_URL } from '../lib/api';
+
 
             // ...
             const response = await fetch(`${API_BASE_URL}/api/chat`, {
@@ -214,15 +216,6 @@ export default function Playground() {
         navigator.clipboard.writeText(text);
     };
 
-    const reloadLastMessage = () => {
-        const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
-        if (lastUserMsg) {
-            if (messages[messages.length - 1].role === 'assistant') {
-                setMessages(prev => prev.slice(0, -1));
-            }
-            handleSend(lastUserMsg.content);
-        }
-    };
 
     const handleEdit = (text: string) => {
         setInput(text);

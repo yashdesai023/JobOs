@@ -3,6 +3,9 @@ import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { pb } from '../lib/pocketbase';
 
+
+import { API_BASE_URL } from '../lib/api';
+
 export default function ResumeGenerator() {
     const [jobDescription, setJobDescription] = useState('');
     const [jobTitle, setJobTitle] = useState('');
@@ -31,7 +34,7 @@ export default function ResumeGenerator() {
 
         setIsGenerating(true);
         try {
-            import { API_BASE_URL } from '../lib/api';
+
 
             // ... (inside the component)
             const response = await fetch(`${API_BASE_URL}/api/generate-resume`, {

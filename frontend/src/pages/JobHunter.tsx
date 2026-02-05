@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { pb } from '../lib/pocketbase';
 import type { RecordModel } from 'pocketbase';
 
+import { API_BASE_URL } from '../lib/api';
+
 export default function JobHunter() {
     const [isLoading, setIsLoading] = useState(false);
     const [reports, setReports] = useState<RecordModel[]>([]);
@@ -34,9 +36,9 @@ export default function JobHunter() {
     const handleTriggerHunt = async () => {
         setIsLoading(true);
         try {
-import { API_BASE_URL } from '../lib/api';
 
-// ...
+
+            // ...
             const response = await fetch(`${API_BASE_URL}/api/trigger-hunt`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

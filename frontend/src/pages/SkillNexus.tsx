@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { pb } from '../lib/pocketbase';
 import {
     LuLayoutDashboard, LuServer, LuBrain, LuCloud, LuPenTool, LuBox,
-    LuCheck, LuClock, LuCircle, LuPlus, LuTrash, LuX,
+    LuCheck, LuClock, LuPlus, LuTrash, LuX,
     LuLink, LuFile, LuExternalLink,
     LuTrendingUp, LuLayoutGrid, LuList, LuMap, LuCalendar
 } from 'react-icons/lu';
