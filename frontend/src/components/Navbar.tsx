@@ -2,11 +2,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { pb } from '../lib/pocketbase';
+import { FaBars, FaTimes } from 'react-icons/fa';
 
 export default function Navbar() {
     const location = useLocation();
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(pb.authStore.isValid);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         return pb.authStore.onChange((token) => {
@@ -50,8 +52,8 @@ export default function Navbar() {
             >
                 <div className="flex items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-2 py-2 pl-6 shadow-2xl pointer-events-auto">
 
-                    {/* Navigation Links */}
-                    <ul className="flex items-center gap-8 mr-2">
+                    {/* Desktop Navigation Links */}
+                    <ul className="hidden md:flex items-center gap-8 mr-2">
                         {activeLinks.map((link) => (
                             <li key={link.name}>
                                 {link.type === 'router' ? (
@@ -83,6 +85,59 @@ export default function Navbar() {
                             </button>
                         </Link>
                     )}
+
+                    {/* Mobile Hamburger Button */}
+                    <button
+                        className="md:hidden ml-4 text-white/70 hover:text-white transition-colors"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
+                        {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+                    </button>
+
+                    {/* Mobile Menu Overlay */}
+                    <AnimatePresence>
+                        {isMobileMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="absolute top-16 right-0 left-0 bg-[#0a0a0a] border-b border-white/10 p-6 shadow-2xl md:hidden rounded-b-2xl border-x border-white/10 mx-4"
+                            >
+                                <ul className="flex flex-col gap-4">
+                                    {activeLinks.map((link) => (
+                                        <li key={link.name}>
+                                            {link.type === 'router' ? (
+                                                <Link
+                                                    to={link.path}
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className={`block text-lg font-medium transition-colors ${location.pathname === link.path ? 'text-white' : 'text-white/60'}`}
+                                                >
+                                                    {link.name}
+                                                </Link>
+                                            ) : (
+                                                <a
+                                                    href={link.path}
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="block text-lg font-medium text-white/60 hover:text-white transition-colors"
+                                                >
+                                                    {link.name}
+                                                </a>
+                                            )}
+                                        </li>
+                                    ))}
+                                    {!isAuthenticated && (
+                                        <li>
+                                            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                                                <button className="w-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-6 py-3 rounded-xl border border-white/5 transition-all mt-2">
+                                                    Login
+                                                </button>
+                                            </Link>
+                                        </li>
+                                    )}
+                                </ul>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </motion.nav>
 

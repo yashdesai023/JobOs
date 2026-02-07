@@ -1,40 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { pb } from '../lib/pocketbase';
-import { FaPlus, FaChartBar, FaList, FaTrash, FaExternalLinkAlt, FaChevronDown, FaEdit } from 'react-icons/fa';
+import { FaPlus, FaChartBar, FaList, FaTrash, FaExternalLinkAlt, FaChevronDown, FaEdit, FaEye, FaSync } from 'react-icons/fa';
 
-// Options with proper display labels
-const ROLE_OPTIONS = [
-    { value: "frontend", label: "Frontend Developer" },
-    { value: "backend", label: "Backend Developer" },
-    { value: "fullstack", label: "Full Stack Engineer" },
-    { value: "ai_engineer", label: "AI Engineer" },
-    { value: "data_scientist", label: "Data Scientist" },
-    { value: "devops", label: "DevOps Engineer" },
-    { value: "product_manager", label: "Product Manager" },
-    { value: "ui_ux_designer", label: "UI/UX Designer" },
-    { value: "qa_engineer", label: "QA Engineer" },
-    { value: "mobile_engineer", label: "Mobile Developer" },
-    { value: "cloud_architect", label: "Cloud Architect" },
-    { value: "technical_writer", label: "Technical Writer" },
-    { value: "business_analyst", label: "Business Analyst" },
-    { value: "solutions_architect", label: "Solutions Architect" }
-];
-
-const STATUS_OPTIONS = [
-    { value: 'Applied', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
-    { value: 'Screening', color: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' },
-    { value: 'Interview', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
-    { value: 'Offer', color: 'bg-green-500/20 text-green-300 border-green-500/30' },
-    { value: 'Rejected', color: 'bg-red-500/20 text-red-300 border-red-500/30' },
-    { value: 'Ghosted', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
-];
-
-const STATUS_COLORS: any = STATUS_OPTIONS.reduce((acc: any, curr) => {
-    acc[curr.value] = curr.color;
-    return acc;
-}, {});
+import { ROLE_OPTIONS, STATUS_OPTIONS, STATUS_COLORS } from '../constants';
 
 
 // --- CUSTOM SELECT COMPONENT ---
@@ -97,6 +68,7 @@ export default function ApplicationTracker() {
     const [applications, setApplications] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [editId, setEditId] = useState<string | null>(null);
 
     // Form State
@@ -120,6 +92,12 @@ export default function ApplicationTracker() {
         } catch (e) {
             console.log("Error fetching applications:", e);
         }
+    };
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await fetchApplications();
+        setTimeout(() => setIsRefreshing(false), 800);
     };
 
     useEffect(() => {
@@ -242,6 +220,14 @@ export default function ApplicationTracker() {
                         >
                             <FaChartBar /> Analytics
                         </button>
+                        <button
+                            onClick={handleRefresh}
+                            disabled={isRefreshing}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all text-white/40 hover:text-white hover:bg-white/5 disabled:opacity-50`}
+                            title="Refresh Data"
+                        >
+                            <FaSync className={isRefreshing ? "animate-spin text-green-400" : ""} />
+                        </button>
                         <div className="w-[1px] h-6 bg-white/10 mx-1" />
                         <button
                             onClick={() => { resetForm(); setIsModalOpen(true); }}
@@ -260,9 +246,52 @@ export default function ApplicationTracker() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
-                            className="bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl"
+                            className="bg-transparent md:bg-[#0a0a0a]/80 md:backdrop-blur-xl md:border md:border-white/10 rounded-2xl md:overflow-hidden md:shadow-2xl"
                         >
-                            <div className="overflow-x-auto">
+                            {/* MOBILE CARD VIEW */}
+                            <div className="md:hidden space-y-4">
+                                {applications.length === 0 ? (
+                                    <div className="text-center text-white/20 py-12">No applications yet.</div>
+                                ) : (
+                                    applications.map((app) => (
+                                        <div key={app.id} className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 shadow-lg relative overflow-hidden">
+                                            <div className="flex justify-between items-start mb-3">
+                                                <div>
+                                                    <h3 className="font-bold text-white text-lg flex items-center gap-2">
+                                                        {app.company}
+                                                        {app.url && <a href={app.url} target="_blank" rel="noreferrer" className="text-blue-400 text-xs"><FaExternalLinkAlt /></a>}
+                                                    </h3>
+                                                    <p className="text-white/50 text-sm">{getRoleLabel(app.role)}</p>
+                                                </div>
+                                                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${STATUS_COLORS[app.status] || 'bg-white/10 text-white'}`}>
+                                                    {app.status}
+                                                </span>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-2 text-sm text-white/60 mb-4">
+                                                <div>📍 {app.location || 'N/A'}</div>
+                                                <div className="text-right">💰 {app.salary || 'N/A'}</div>
+                                                <div className="col-span-2 text-xs opacity-50">Applied: {new Date(app.date_applied).toLocaleDateString()}</div>
+                                            </div>
+
+                                            <div className="flex justify-end gap-2 border-t border-white/10 pt-3">
+                                                <Link to={`/tracker/${app.id}`} className="px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-white text-sm font-bold flex items-center gap-2">
+                                                    <FaEye /> View
+                                                </Link>
+                                                <button onClick={() => handleEdit(app)} className="px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-sm">
+                                                    <FaEdit />
+                                                </button>
+                                                <button onClick={() => handleDelete(app.id)} className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-sm">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            {/* DESKTOP TABLE VIEW */}
+                            <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-white/5 text-white/40 text-xs uppercase tracking-wider border-b border-white/10">
@@ -284,12 +313,14 @@ export default function ApplicationTracker() {
                                             applications.map((app) => (
                                                 <tr key={app.id} className="group hover:bg-white/[0.02] transition-colors">
                                                     <td className="p-4">
-                                                        <div className="font-bold text-white text-lg">{getRoleLabel(app.role)}</div>
-                                                        <div className="text-white/50 text-sm flex items-center gap-2">
+                                                        <div className="font-bold text-white text-lg flex items-center gap-2">
                                                             {app.company}
                                                             {app.url && (
                                                                 <a href={app.url} target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300"><FaExternalLinkAlt className="text-xs" /></a>
                                                             )}
+                                                        </div>
+                                                        <div className="text-white/50 text-sm">
+                                                            {getRoleLabel(app.role)}
                                                         </div>
                                                     </td>
                                                     <td className="p-4">
@@ -306,6 +337,13 @@ export default function ApplicationTracker() {
                                                     </td>
                                                     <td className="p-4 text-right">
                                                         <div className="flex items-center justify-end gap-2">
+                                                            <Link
+                                                                to={`/tracker/${app.id}`}
+                                                                className="p-2 text-white/20 hover:text-green-400 transition-colors"
+                                                                title="View Details"
+                                                            >
+                                                                <FaEye />
+                                                            </Link>
                                                             <button
                                                                 onClick={() => handleEdit(app)}
                                                                 className="p-2 text-white/20 hover:text-blue-400 transition-colors"

@@ -195,7 +195,7 @@ export default function Dashboard() {
                                     <div className="text-center py-12 text-white/30">No activity yet. Start tracking!</div>
                                 ) : (
                                     recentActivity.map((app) => (
-                                        <div key={app.id} className="group bg-black/20 hover:bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center justify-between transition-all">
+                                        <div key={app.id} className="group bg-black/20 hover:bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
                                             <div className="flex items-center gap-4">
                                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold shadow-lg
                                                     ${app.status === 'Applied' ? 'bg-gradient-to-br from-blue-500 to-cyan-600 text-white' :

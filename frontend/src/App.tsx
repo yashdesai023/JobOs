@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import SkillNexus from './pages/SkillNexus';
 import ApplicationTracker from './pages/ApplicationTracker';
+import ApplicationDetails from './pages/ApplicationDetails';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/playground" element={<Playground />} />
             <Route path="/hunter" element={<JobHunter />} />
             <Route path="/tracker" element={<ApplicationTracker />} />
+            <Route path="/tracker/:id" element={<ApplicationDetails />} />
             <Route path="/nexus" element={<SkillNexus />} />
             <Route path="/resume" element={<ResumeGenerator />} />
           </Route>
