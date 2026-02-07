@@ -76,9 +76,7 @@ export default function BlogManager() {
         }
     };
 
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData(prev => ({ ...prev, published: e.target.checked }));
-    };
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
