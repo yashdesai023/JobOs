@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 import { pb } from '../lib/pocketbase';
-import { FaArrowLeft, FaExternalLinkAlt, FaCalendar, FaMapMarkerAlt, FaMoneyBillWave, FaStickyNote, FaTrash, FaEdit } from 'react-icons/fa';
+import { FaArrowLeft, FaExternalLinkAlt, FaCalendar, FaMapMarkerAlt, FaMoneyBillWave, FaStickyNote } from 'react-icons/fa';
 import { STATUS_COLORS } from '../constants';
 
 export default function ApplicationDetails() {

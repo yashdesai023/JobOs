@@ -195,43 +195,43 @@ export default function ApplicationTracker() {
             <div className="pt-32 px-4 max-w-7xl mx-auto w-full relative z-10">
 
                 {/* Header & Controls */}
-                <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 mb-10">
-                    <div>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+                    <div className="w-full md:w-auto">
                         <motion.h1
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-4xl font-bold text-white mb-2"
+                            className="text-3xl md:text-4xl font-bold text-white mb-2"
                         >
                             Application Tracker
                         </motion.h1>
-                        <p className="text-white/40">Manage your job search pipeline efficiently.</p>
+                        <p className="text-white/40 text-sm md:text-base">Manage your job search pipeline efficiently.</p>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-white/5 p-1 rounded-xl border border-white/10 backdrop-blur-md">
+                    <div className="w-full md:w-auto flex flex-wrap items-center gap-3 bg-white/5 p-1 rounded-xl border border-white/10 backdrop-blur-md">
                         <button
                             onClick={() => setView('table')}
-                            className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${view === 'table' ? 'bg-white/10 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                            className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all ${view === 'table' ? 'bg-white/10 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
                         >
-                            <FaList /> Table
+                            <FaList /> <span className="hidden sm:inline">Table</span>
                         </button>
                         <button
                             onClick={() => setView('analytics')}
-                            className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${view === 'analytics' ? 'bg-white/10 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                            className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all ${view === 'analytics' ? 'bg-white/10 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
                         >
-                            <FaChartBar /> Analytics
+                            <FaChartBar /> <span className="hidden sm:inline">Analytics</span>
                         </button>
                         <button
                             onClick={handleRefresh}
                             disabled={isRefreshing}
-                            className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all text-white/40 hover:text-white hover:bg-white/5 disabled:opacity-50`}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all text-white/40 hover:text-white hover:bg-white/5 disabled:opacity-50`}
                             title="Refresh Data"
                         >
                             <FaSync className={isRefreshing ? "animate-spin text-green-400" : ""} />
                         </button>
-                        <div className="w-[1px] h-6 bg-white/10 mx-1" />
+                        <div className="w-[1px] h-6 bg-white/10 mx-1 hidden md:block" />
                         <button
                             onClick={() => { resetForm(); setIsModalOpen(true); }}
-                            className="px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:shadow-green-500/20 transition-all shadow-lg"
+                            className="flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:shadow-green-500/20 transition-all shadow-lg min-w-[120px]"
                         >
                             <FaPlus /> Add New
                         </button>
@@ -255,33 +255,36 @@ export default function ApplicationTracker() {
                                 ) : (
                                     applications.map((app) => (
                                         <div key={app.id} className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 shadow-lg relative overflow-hidden">
-                                            <div className="flex justify-between items-start mb-3">
-                                                <div>
-                                                    <h3 className="font-bold text-white text-lg flex items-center gap-2">
+                                            <div className="flex justify-between items-start mb-4 gap-4">
+                                                <div className="min-w-0">
+                                                    <h3 className="font-bold text-white text-lg flex items-center gap-2 truncate">
                                                         {app.company}
-                                                        {app.url && <a href={app.url} target="_blank" rel="noreferrer" className="text-blue-400 text-xs"><FaExternalLinkAlt /></a>}
+                                                        {app.url && <a href={app.url} target="_blank" rel="noreferrer" className="text-blue-400 text-xs shrink-0"><FaExternalLinkAlt /></a>}
                                                     </h3>
-                                                    <p className="text-white/50 text-sm">{getRoleLabel(app.role)}</p>
+                                                    <p className="text-white/50 text-sm truncate">{getRoleLabel(app.role)}</p>
                                                 </div>
-                                                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${STATUS_COLORS[app.status] || 'bg-white/10 text-white'}`}>
+                                                <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border shrink-0 ${STATUS_COLORS[app.status] || 'bg-white/10 text-white'}`}>
                                                     {app.status}
                                                 </span>
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-2 text-sm text-white/60 mb-4">
-                                                <div>📍 {app.location || 'N/A'}</div>
-                                                <div className="text-right">💰 {app.salary || 'N/A'}</div>
-                                                <div className="col-span-2 text-xs opacity-50">Applied: {new Date(app.date_applied).toLocaleDateString()}</div>
+                                            <div className="grid grid-cols-2 gap-3 text-sm text-white/60 mb-4">
+                                                <div className="flex items-center gap-2 truncate"><span className="text-white/20">📍</span> {app.location || 'N/A'}</div>
+                                                <div className="flex items-center gap-2 justify-end truncate"><span className="text-white/20">💰</span> {app.salary || 'N/A'}</div>
+                                                <div className="col-span-2 text-xs opacity-40 flex items-center gap-2 pt-2 border-t border-white/5">
+                                                    <span className="uppercase tracking-widest text-[9px]">Applied</span>
+                                                    {new Date(app.date_applied).toLocaleDateString()}
+                                                </div>
                                             </div>
 
-                                            <div className="flex justify-end gap-2 border-t border-white/10 pt-3">
-                                                <Link to={`/tracker/${app.id}`} className="px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-white text-sm font-bold flex items-center gap-2">
+                                            <div className="flex items-center gap-2 mt-4">
+                                                <Link to={`/tracker/${app.id}`} className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-white text-sm font-bold flex items-center justify-center gap-2 transition-all">
                                                     <FaEye /> View
                                                 </Link>
-                                                <button onClick={() => handleEdit(app)} className="px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-sm">
+                                                <button onClick={() => handleEdit(app)} className="p-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-sm transition-all" aria-label="Edit">
                                                     <FaEdit />
                                                 </button>
-                                                <button onClick={() => handleDelete(app.id)} className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-sm">
+                                                <button onClick={() => handleDelete(app.id)} className="p-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-sm transition-all" aria-label="Delete">
                                                     <FaTrash />
                                                 </button>
                                             </div>

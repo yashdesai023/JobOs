@@ -106,7 +106,7 @@ export default function Dashboard() {
                     animate="visible"
                 >
                     {/* Header */}
-                    <motion.div variants={itemVariants} className="mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+                    <motion.div variants={itemVariants} className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div>
                             <h1 className="text-4xl md:text-5xl font-bold mb-2">
                                 Good Afternoon, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Hunter</span>
@@ -115,11 +115,11 @@ export default function Dashboard() {
                                 <LuActivity className="text-green-400" /> Systems Operational
                             </p>
                         </div>
-                        <div className="flex gap-3">
-                            <Link to="/tracker" className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold transition-all flex items-center gap-2 backdrop-blur-md">
+                        <div className="flex flex-wrap gap-3 w-full md:w-auto">
+                            <Link to="/tracker" className="flex-1 md:flex-none px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold transition-all flex items-center justify-center gap-2 backdrop-blur-md">
                                 <LuPlus className="text-sm" /> Track App
                             </Link>
-                            <Link to="/hunter" className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-bold shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transition-all flex items-center gap-2">
+                            <Link to="/hunter" className="flex-1 md:flex-none px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-bold shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transition-all flex items-center justify-center gap-2">
                                 <LuRocket /> Launch Hunter
                             </Link>
                         </div>
