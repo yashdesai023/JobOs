@@ -33,7 +33,8 @@ export default function Dashboard() {
         totalResumes: 0,
         totalProjects: 0,
         nexusSkills: 0,
-        nexusCompleted: 0
+        nexusCompleted: 0,
+        totalBlogs: 0
     });
     const [recentActivity, setRecentActivity] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -47,13 +48,15 @@ export default function Dashboard() {
                     jobsResult,
                     resumesResult,
                     projectsResult,
-                    skillsResult
+                    skillsResult,
+                    blogsResult
                 ] = await Promise.all([
-                    pb.collection('applications').getFullList({ sort: '-created' }),
-                    pb.collection('job_reports').getList(1, 1),
-                    pb.collection('resumes').getList(1, 1),
-                    pb.collection('projects').getList(1, 1),
-                    pb.collection('skills').getFullList()
+                    pb.collection('applications').getFullList({ sort: '-created', requestKey: null }),
+                    pb.collection('job_reports').getList(1, 1, { requestKey: null }),
+                    pb.collection('resumes').getList(1, 1, { requestKey: null }),
+                    pb.collection('projects').getList(1, 1, { requestKey: null }),
+                    pb.collection('skills').getFullList({ requestKey: null }),
+                    pb.collection('blogs').getList(1, 1, { requestKey: null })
                 ]);
 
                 const apps = appsResult;
@@ -68,8 +71,11 @@ export default function Dashboard() {
                     totalResumes: resumesResult.totalItems,
                     totalProjects: projectsResult.totalItems,
                     nexusSkills: skills.length,
-                    nexusCompleted: skills.filter(s => s.status === 'Completed').length
+                    nexusCompleted: skills.filter(s => s.status === 'Completed').length,
+                    totalBlogs: blogsResult.totalItems
                 });
+
+
 
                 setRecentActivity(apps.slice(0, 5));
 
@@ -174,6 +180,18 @@ export default function Dashboard() {
                                 Projects & Documents
                             </div>
                         </motion.div>
+
+                        {/* Stat Card 5 - Blogs */}
+                        <motion.div variants={itemVariants} className="bg-white/5 border border-white/10 rounded-3xl p-6 relative overflow-hidden group backdrop-blur-xl hover:bg-white/10 transition-colors">
+                            <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <LuFileText className="text-6xl text-orange-500" />
+                            </div>
+                            <h3 className="text-white/40 text-xs uppercase tracking-widest font-bold mb-4">Content Hub</h3>
+                            <div className="text-4xl font-bold text-white mb-2">{stats.totalBlogs}</div>
+                            <div className="text-orange-400 text-xs font-mono bg-orange-500/10 w-fit px-2 py-1 rounded">
+                                Published Articles
+                            </div>
+                        </motion.div>
                     </div>
 
                     {/* Main Content Split */}
@@ -239,6 +257,12 @@ export default function Dashboard() {
                                             <LuFileText className="text-lg text-purple-400" />
                                         </div>
                                         <span className="text-xs font-bold text-white/80">Resumes</span>
+                                    </Link>
+                                    <Link to="/dashboard/blogs/new" className="bg-black/20 hover:bg-green-500/20 border border-white/5 hover:border-green-500/30 rounded-xl p-3 flex items-center gap-3 transition-all group">
+                                        <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <LuFileText className="text-lg text-green-400" />
+                                        </div>
+                                        <span className="text-xs font-bold text-white/80">Add Blog</span>
                                     </Link>
                                     <Link to="/nexus" className="bg-black/20 hover:bg-pink-500/20 border border-white/5 hover:border-pink-500/30 rounded-xl p-3 flex items-center gap-3 transition-all group">
                                         <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">

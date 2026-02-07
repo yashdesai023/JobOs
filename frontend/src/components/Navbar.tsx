@@ -27,6 +27,7 @@ export default function Navbar() {
         { name: "Work", path: "/#work", type: "scroll" },
         { name: "Skills", path: "/#skills", type: "scroll" },
         { name: "Services", path: "/#services", type: "scroll" },
+        { name: "Blogs", path: "/#blogs", type: "scroll" },
     ];
 
     const privateLinks = [
@@ -38,6 +39,7 @@ export default function Navbar() {
         { name: "Nexus", path: "/nexus", type: "router" },
         { name: "Resume", path: "/resume", type: "router" },
         { name: "Playground", path: "/playground", type: "router" },
+        { name: "New Blog", path: "/dashboard/blogs/new", type: "router" },
     ];
 
     const activeLinks = isAuthenticated ? privateLinks : publicLinks;

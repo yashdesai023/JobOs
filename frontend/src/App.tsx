@@ -1,7 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import ProjectDetail from './pages/ProjectDetail';
+import BlogDetail from './pages/BlogDetail';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import AddBlog from './pages/AddBlog';
 import CollectionsHub from './pages/CollectionsHub';
 import CollectionManager from './pages/CollectionManager';
 import Playground from './pages/Playground';
@@ -19,11 +22,14 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/work/:slug" element={<ProjectDetail />} />
+          <Route path="/blogs/:slug" element={<BlogDetail />} />
           <Route path="/login" element={<Login />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/blogs/new" element={<AddBlog />} />
             <Route path="/collections" element={<CollectionsHub />} />
             <Route path="/collections/:collectionName" element={<CollectionManager />} />
             <Route path="/playground" element={<Playground />} />

@@ -1,7 +1,15 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
+import type { RefObject } from 'react';
 
-export default function Overlay() {
-    const { scrollYProgress } = useScroll();
+interface OverlayProps {
+    scrollRef: RefObject<HTMLElement | null>;
+}
+
+export default function Overlay({ scrollRef }: OverlayProps) {
+    const { scrollYProgress } = useScroll({
+        target: scrollRef,
+        offset: ["start start", "end end"]
+    });
 
     // Parallax effects
     // Section 1: 0-30%
@@ -21,9 +29,9 @@ export default function Overlay() {
             {/* Section 1 */}
             <motion.div
                 style={{ opacity: opacity1, y: y1 }}
-                className="fixed top-0 left-0 w-full h-screen flex items-center justify-center"
+                className="fixed top-0 left-0 w-full h-screen flex flex-col items-center justify-center p-4 md:p-12"
             >
-                <div className="text-center">
+                <div className="text-center mb-12">
                     <h1 className="text-6xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
                         Yash Desai
                     </h1>
