@@ -1,58 +1,58 @@
 import { motion } from 'framer-motion';
 import {
-    SiReact, SiTypescript, SiNextdotjs, SiTailwindcss, SiFramer, SiThreedotjs,
-    SiNodedotjs, SiPython, SiFastapi, SiPostgresql, SiPocketbase, SiGraphql,
-    SiPytorch, SiTensorflow, SiOpenai, SiHuggingface,
-    SiDocker, SiKubernetes, SiAmazon, SiTerraform, SiGit, SiGithubactions
+    SiPython, SiFastapi, SiPostgresql,
+    SiPytorch, SiOpenai,
+    SiDocker, SiAmazon, SiGit, SiGithubactions,
+    SiSpring, SiRedis
 } from 'react-icons/si';
-import { LuBrain, LuServer, LuLayers, LuContainer } from 'react-icons/lu';
+import { LuBrain, LuServer, LuContainer, LuCircleCheck, LuBot, LuDatabase, LuCoffee, LuTestTube, LuFileCode, LuGitBranch, LuPackage, LuCode, LuActivity, LuClipboardList } from 'react-icons/lu';
 
 const skillCategories = [
     {
-        title: "Frontend Experience",
-        icon: <LuLayers className="text-blue-400" />,
-        skills: [
-            { name: "React", icon: <SiReact className="text-[#61DAFB]" /> },
-            { name: "TypeScript", icon: <SiTypescript className="text-[#3178C6]" /> },
-            { name: "Next.js", icon: <SiNextdotjs className="text-white" /> },
-            { name: "Tailwind", icon: <SiTailwindcss className="text-[#06B6D4]" /> },
-            { name: "Framer Motion", icon: <SiFramer className="text-white" /> },
-            { name: "Three.js", icon: <SiThreedotjs className="text-white" /> },
-        ]
-    },
-    {
-        title: "Backend & Systems",
-        icon: <LuServer className="text-green-400" />,
-        skills: [
-            { name: "Node.js", icon: <SiNodedotjs className="text-[#339933]" /> },
-            { name: "Python", icon: <SiPython className="text-[#3776AB]" /> },
-            { name: "FastAPI", icon: <SiFastapi className="text-[#009688]" /> },
-            { name: "PostgreSQL", icon: <SiPostgresql className="text-[#4169E1]" /> },
-            { name: "PocketBase", icon: <SiPocketbase className="text-[#B8DBE4]" /> },
-            { name: "GraphQL", icon: <SiGraphql className="text-[#E10098]" /> },
-        ]
-    },
-    {
-        title: "AI & Intelligence",
+        title: "Generative AI & Intelligence",
         icon: <LuBrain className="text-purple-400" />,
         skills: [
-            { name: "PyTorch", icon: <SiPytorch className="text-[#EE4C2C]" /> },
-            { name: "TensorFlow", icon: <SiTensorflow className="text-[#FF6F00]" /> },
-            { name: "LangChain", icon: <span className="text-2xl">🦜🔗</span> }, // Emoji for LangChain as icon might not be in Si yet or use generic
+            { name: "LangChain", icon: <LuBot className="text-white" /> }, // Keeping generic bot
+            { name: "RAG Arch", icon: <LuBrain className="text-pink-400" /> },
+            { name: "Pinecone", icon: <LuDatabase className="text-white" /> },
             { name: "OpenAI API", icon: <SiOpenai className="text-white" /> },
-            { name: "Hugging Face", icon: <SiHuggingface className="text-[#FFD21E]" /> },
-            { name: "RAG Systems", icon: <LuBrain className="text-pink-400" /> },
+            { name: "PyTorch", icon: <SiPytorch className="text-[#EE4C2C]" /> },
+            { name: "Agentic Flows", icon: <LuGitBranch className="text-white" /> },
         ]
     },
     {
-        title: "DevOps & Cloud",
+        title: "Backend Engineering (Enterprise)",
+        icon: <LuServer className="text-green-400" />,
+        skills: [
+            { name: "Python (Adv)", icon: <SiPython className="text-[#3776AB]" /> },
+            { name: "Java (Pro)", icon: <LuCoffee className="text-[#f89820]" /> },
+            { name: "Spring Boot", icon: <SiSpring className="text-[#6DB33F]" /> },
+            { name: "FastAPI", icon: <SiFastapi className="text-[#009688]" /> },
+            { name: "PostgreSQL", icon: <SiPostgresql className="text-[#4169E1]" /> },
+            { name: "Redis", icon: <SiRedis className="text-[#DC382D]" /> },
+        ]
+    },
+    {
+        title: "Quality & Automation",
+        icon: <LuCircleCheck className="text-blue-400" />,
+        skills: [
+            { name: "Playwright", icon: <LuFileCode className="text-[#2EAD33]" /> },
+            { name: "Selenium", icon: <LuCode className="text-[#43B02A]" /> },
+            { name: "API Testing", icon: <LuTestTube className="text-white" /> },
+            { name: "Accessibility", icon: <LuCircleCheck className="text-white" /> },
+            { name: "JUnit 5", icon: <LuTestTube className="text-[#25A162]" /> },
+            { name: "Allure", icon: <LuClipboardList className="text-white" /> },
+        ]
+    },
+    {
+        title: "MLOps & Operational Excellence",
         icon: <LuContainer className="text-orange-400" />,
         skills: [
             { name: "Docker", icon: <SiDocker className="text-[#2496ED]" /> },
-            { name: "Kubernetes", icon: <SiKubernetes className="text-[#326CE5]" /> },
-            { name: "AWS", icon: <SiAmazon className="text-[#FF9900]" /> },
             { name: "CI/CD", icon: <SiGithubactions className="text-[#2088FF]" /> },
-            { name: "Terraform", icon: <SiTerraform className="text-[#7B42BC]" /> },
+            { name: "AWS", icon: <SiAmazon className="text-[#FF9900]" /> },
+            { name: "MLflow", icon: <LuActivity className="text-white" /> },
+            { name: "PyPI Dist", icon: <LuPackage className="text-[#3776AB]" /> },
             { name: "Git", icon: <SiGit className="text-[#F05032]" /> },
         ]
     }
@@ -91,7 +91,7 @@ export default function Skills() {
                         Technical Arsenal
                     </h2>
                     <p className="text-white/50 text-xl max-w-2xl mx-auto">
-                        A curated stack of technologies I use to build scalable, intelligent, and performant systems.
+                        A strategic blend of Generative AI, Enterprise Backend, and Quality Engineering standards.
                     </p>
                 </motion.div>
 

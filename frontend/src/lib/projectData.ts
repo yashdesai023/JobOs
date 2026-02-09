@@ -19,6 +19,9 @@ VectorDBpipe is an open-source Python library that abstracts the complexities of
 
 ### Impact
 Reduced boilerplate code by 60% across 5 production RAG applications.
+
+### Performance Benchmark Suite
+Tested on AWS T3 instances, \`vectorDBpipe\` handles high-throughput ingestion with optimized batch processing, ensuring consistent low latency even under heavy load.
         `
     },
     {
@@ -41,6 +44,9 @@ This project explores the orchestration of multiple autonomous agents to solve m
 
 ### Results
 Achieved 85% success rate on complex reasoning benchmarks (GSM8K).
+
+### Logic Diagram
+\`Summarizer AI -> Analyst AI -> Drafter AI\` loop ensures continuous refinement. The Summarizer condenses input, the Analyst extracts insights, and the Drafter generates the final output, all sharing context via the defined memory layer.
         `
     },
     {
@@ -79,6 +85,44 @@ A high-performance web server built from scratch to understand the fundamentals 
 - **Thread Pool**: Custom thread pool for handling concurrent connections.
 - **Request Parsing**: Zero-copy HTTP request parser.
 - **Benchmarks**: Handles 10k+ concurrent connections with sub-millisecond latency.
+        `
+    },
+    {
+        slug: "api-automation-framework",
+        title: "API Automation Framework",
+        category: "Software Quality Engineering",
+        description: "100% Pass-Rate REST API Validation. Comprehensive automation framework ensuring pass-rate reliability.",
+        image: "/projects/api-testing.png",
+        productionUrl: "#",
+        githubUrl: "https://github.com/yashdesai023",
+        techStack: ["TypeScript", "Playwright", "Jest", "Allure"],
+        content: `
+## Overview
+A robust API automation framework built to ensure the reliability and contract compliance of microservices.
+
+### Key Highlights
+- **100% Reliability**: Achieved zero flaky tests with retry strategies.
+- **Reporting**: Integrated Allure reports for detailed failure analysis.
+- **CI/CD Integration**: automatically runs on every PR via GitHub Actions.
+        `
+    },
+    {
+        slug: "end-to-end-mlops-pipeline",
+        title: "End-to-End MLOps Pipeline",
+        category: "MLOps & Production Engineering",
+        description: "Automated Model Lifecycle with MLflow & Docker. From local notebook to sharded CI/CD pipeline.",
+        image: "/projects/mlops.png",
+        productionUrl: "#",
+        githubUrl: "https://github.com/yashdesai023",
+        techStack: ["MLflow", "Docker", "AWS Sagemaker", "GitHub Actions"],
+        content: `
+## Overview
+An end-to-end MLOps pipeline automating the model lifecycle from training to deployment.
+
+### Features
+- **Experiment Tracking**: Uses MLflow to track parameters and metrics.
+- **Model Registry**: Version control for model artifacts.
+- **Automated Deployment**: One-click deploy to AWS Sagemaker endpoints.
         `
     }
 ];

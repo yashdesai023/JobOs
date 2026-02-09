@@ -62,7 +62,7 @@ export default function ProofSection() {
 
                     <div className="flex flex-col items-center gap-3">
                         <a
-                            href="https://db.jobos.online/api/files/pbc_2471947077/xhvodzuzfcsuxay/yash_desai_ultimate_dossier_diwatnx3yi.pdf"
+                            href="https://db.jobos.online/api/files/pbc_2471947077/gcbz3elpm2gnu42/yash_desai_ultimate_dossier_final_1o58dn4ntr.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-3 px-8 py-4 bg-white hover:bg-gray-200 text-black font-bold rounded-full transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.1)] pointer-events-auto"

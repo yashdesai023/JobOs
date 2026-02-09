@@ -42,21 +42,26 @@ export default function Overlay({ scrollRef }: OverlayProps) {
             {/* Section 2 */}
             <motion.div
                 style={{ opacity: opacity2, x: x2 }}
-                className="fixed top-0 left-0 w-full h-screen flex items-center justify-start pl-[10%] md:pl-[20%]"
+                className="fixed top-0 left-0 w-full h-screen flex items-center justify-start pl-[10%] md:pl-[15%]"
             >
-                <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-                    Architecting <br /> Intelligent <br /> Systems.
+                <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight max-w-4xl">
+                    Architecting <br /> High-Performance <br /> GenAI Systems.
                 </h2>
             </motion.div>
 
             {/* Section 3 */}
             <motion.div
                 style={{ opacity: opacity3, x: x3 }}
-                className="fixed top-0 left-0 w-full h-screen flex items-center justify-end pr-[10%] md:pr-[20%]"
+                className="fixed top-0 left-0 w-full h-screen flex items-center justify-end pr-[10%] md:pr-[15%]"
             >
-                <h2 className="text-5xl md:text-7xl font-bold text-right text-white leading-tight">
-                    Redefining <br /> Human-AI <br /> Interaction.
-                </h2>
+                <div className="text-right max-w-2xl">
+                    <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight mb-6">
+                        Optimizing RAG Retrieval to 18.4ms (p50)
+                    </h2>
+                    <p className="text-xl md:text-2xl text-white/70">
+                        and building autonomous multi-agent pipelines for enterprise scale.
+                    </p>
+                </div>
             </motion.div>
         </div>
     );

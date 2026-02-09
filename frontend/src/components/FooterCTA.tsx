@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
-import { LuMail, LuMapPin, LuPhone, LuSend } from 'react-icons/lu';
+import { LuMail, LuMapPin, LuPhone, LuSend, LuGlobe } from 'react-icons/lu';
 import { useState } from 'react';
 
 export default function FooterCTA() {
@@ -69,8 +69,9 @@ export default function FooterCTA() {
                         <div className="flex gap-4 mt-12">
                             {[
                                 { icon: FaGithub, href: "https://github.com/yashdesai023", color: "hover:text-white" },
-                                { icon: FaLinkedin, href: "https://linkedin.com/in/yash-desai", color: "hover:text-blue-400" },
-                                { icon: FaTwitter, href: "https://twitter.com", color: "hover:text-sky-400" }
+                                { icon: FaLinkedin, href: "https://www.linkedin.com/in/yash-s-desai-/", color: "hover:text-blue-400" },
+                                { icon: FaTwitter, href: "https://twitter.com/yashdesaieng", color: "hover:text-sky-400" },
+                                { icon: LuGlobe, href: "https://yash.jobos.online", color: "hover:text-purple-400" } // Portfolio Icon
                             ].map((social, i) => (
                                 <a
                                     key={i}
