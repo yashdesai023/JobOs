@@ -167,7 +167,7 @@ export default function ProjectDetail() {
                                     <motion.blockquote
                                         whileHover={{ x: 5 }}
                                         className="border-l-4 border-purple-500 pl-6 py-4 my-10 bg-purple-500/10 italic text-white/90 rounded-r-xl shadow-lg relative z-10"
-                                        {...props}
+                                        {...(props as any)}
                                     />
                                 ),
                                 code: CodeBlock,
