@@ -1,9 +1,11 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { LuTerminal, LuUser, LuBriefcase, LuCpu, LuZap, LuBookOpen, LuMail, LuLogIn } from 'react-icons/lu';
+import { LuTerminal, LuUser, LuBriefcase, LuCpu, LuZap, LuBookOpen, LuMail, LuLogIn, LuMenu, LuX } from 'react-icons/lu';
 
 export default function PublicNavbar() {
     const location = useLocation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navLinks = [
         { name: 'About', path: '/#about', icon: <LuUser /> },
@@ -70,8 +72,8 @@ export default function PublicNavbar() {
                     })}
                 </div>
 
-                {/* Right Actions */}
-                <div className="flex items-center gap-6">
+                {/* Desktop Right Actions */}
+                <div className="hidden md:flex items-center gap-6">
                     <Link
                         to="/login"
                         className="group flex items-center gap-2 px-6 py-2 border border-white/10 bg-white/5 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all rounded-full"
@@ -80,7 +82,48 @@ export default function PublicNavbar() {
                         <LuLogIn className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
+
+                {/* Mobile Menu Toggle */}
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="md:hidden p-2 text-white/60 hover:text-white transition-colors"
+                >
+                    {isMobileMenuOpen ? <LuX size={24} /> : <LuMenu size={24} />}
+                </button>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="md:hidden bg-void border-b border-white/10 overflow-hidden"
+                    >
+                        <div className="px-6 py-8 flex flex-col gap-4">
+                            {navLinks.map((link) => (
+                                <a
+                                    key={link.name}
+                                    href={link.path}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="flex items-center gap-4 text-white/60 hover:text-white transition-colors font-mono text-sm uppercase tracking-widest p-2"
+                                >
+                                    {link.icon} {link.name}
+                                </a>
+                            ))}
+                            <div className="h-px bg-white/10 my-2" />
+                            <Link
+                                to="/login"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="flex items-center gap-4 text-aurora-cyan font-mono text-sm uppercase tracking-widest p-2"
+                            >
+                                <LuLogIn /> Access System
+                            </Link>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.nav>
     );
 }

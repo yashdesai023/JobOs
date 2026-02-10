@@ -1,19 +1,13 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LuLayoutGrid, LuTerminal, LuCpu, LuFileText, LuLogOut, LuSearch, LuDatabase, LuBrain } from 'react-icons/lu';
+import { LuLayoutGrid, LuTerminal, LuCpu, LuFileText, LuLogOut, LuSearch, LuDatabase, LuBrain, LuMenu, LuX } from 'react-icons/lu';
 import { pb } from '../lib/pocketbase';
 
 export default function Navbar() {
     const location = useLocation();
     const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(pb.authStore.isValid);
-
-    useEffect(() => {
-        return pb.authStore.onChange(() => {
-            setIsAuthenticated(pb.authStore.isValid);
-        });
-    }, []);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const handleLogout = () => {
         pb.authStore.clear();
@@ -52,7 +46,7 @@ export default function Navbar() {
                     </div>
                 </Link>
 
-                {/* Internal Navigation Links */}
+                {/* Internal Navigation Links - Desktop */}
                 <div className="hidden lg:flex items-center gap-1">
                     {internalLinks.map((link) => {
                         const isActive = location.pathname.startsWith(link.path);
@@ -94,13 +88,60 @@ export default function Navbar() {
 
                     <button
                         onClick={handleLogout}
-                        className="group flex items-center gap-2 px-4 py-2 border border-red-500/20 bg-red-500/5 text-red-300 font-mono text-xs uppercase tracking-widest hover:bg-red-500/10 transition-all rounded-sm"
+                        className="hidden md:flex group items-center gap-2 px-4 py-2 border border-red-500/20 bg-red-500/5 text-red-300 font-mono text-xs uppercase tracking-widest hover:bg-red-500/10 transition-all rounded-sm"
                         title="Disconnect"
                     >
                         <LuLogOut className="group-hover:-translate-x-1 transition-transform" />
                     </button>
+
+                    {/* Mobile Menu Toggle */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="lg:hidden p-2 text-white/60 hover:text-white transition-colors"
+                    >
+                        {isMobileMenuOpen ? <LuX size={24} /> : <LuMenu size={24} />}
+                    </button>
                 </div>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="lg:hidden bg-void border-b border-white/10 overflow-hidden"
+                    >
+                        <div className="px-6 py-8 flex flex-col gap-4">
+                            {internalLinks.map((link) => {
+                                const isActive = location.pathname.startsWith(link.path);
+                                return (
+                                    <Link
+                                        key={link.name}
+                                        to={link.path}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className={`flex items-center gap-4 font-mono text-sm uppercase tracking-widest p-2 transition-colors ${isActive ? 'text-white bg-white/5' : 'text-white/60 hover:text-white'
+                                            }`}
+                                    >
+                                        <span className={isActive ? 'text-aurora-cyan' : 'text-white/40'}>
+                                            {link.icon}
+                                        </span>
+                                        {link.name}
+                                    </Link>
+                                );
+                            })}
+                            <div className="h-px bg-white/10 my-2" />
+                            <button
+                                onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }}
+                                className="flex items-center gap-4 text-red-400 font-mono text-sm uppercase tracking-widest p-2 w-full text-left hover:bg-red-500/5 transition-colors"
+                            >
+                                <LuLogOut /> Disconnect
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.nav>
     );
 }
