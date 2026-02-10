@@ -31,7 +31,7 @@ interface Skill {
 
 const CATEGORY_COLORS: any = {
     'Frontend': 'from-cyan-400 to-blue-500',
-    'Backend': 'from-green-400 to-emerald-600',
+    'Backend': 'from-emerald-400 to-green-600',
     'AI': 'from-purple-400 to-violet-600',
     'DevOps': 'from-orange-400 to-red-500',
     'Design': 'from-pink-400 to-rose-500',
@@ -51,20 +51,17 @@ const CATEGORY_ICONS: any = {
 
 // 1. COSMIC ROADMAP VIEW
 const CosmicRoadmap = ({ skills, onNodeClick }: { skills: Skill[], onNodeClick: (s: Skill) => void }) => {
-    // Sort by date
     const sorted = [...skills].sort((a, b) => new Date(a.target_date).getTime() - new Date(b.target_date).getTime());
 
-    if (sorted.length === 0) return <div className="text-white/30 text-center py-20">No milestones yet.</div>;
+    if (sorted.length === 0) return <div className="text-white/30 text-center py-20 font-mono text-xs uppercase tracking-widest bg-white/[0.02] border border-white/10 rounded-sm">No milestones yet.</div>;
 
-    // Organic Path Logic
-    const gap = 350;
-    const height = 600;
+    const gap = 300;
+    const height = 500;
     const width = Math.max(window.innerWidth, (sorted.length + 1) * gap);
 
-    // Generate organic sine wave with varying amplitude
     const points = sorted.map((_, i) => ({
         x: (i + 1) * gap,
-        y: height / 2 + Math.sin(i * 0.8) * 150 * (i % 2 === 0 ? 1 : -1) // Meandering path
+        y: height / 2 + Math.sin(i * 0.8) * 100 * (i % 2 === 0 ? 1 : -1)
     }));
 
     const pathD = `M 0,${height / 2} ` + points.map((p, i) => {
@@ -77,32 +74,25 @@ const CosmicRoadmap = ({ skills, onNodeClick }: { skills: Skill[], onNodeClick: 
     }).join(' ');
 
     return (
-        <div className="relative w-full h-[600px] overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:hidden bg-white/5 rounded-3xl border border-white/10 backdrop-blur-xl cursor-grab active:cursor-grabbing shadow-2xl">
-            <div style={{ width: `${width}px`, height: '600px' }} className="relative flex items-center">
-                <svg width={width} height="600" className="absolute top-0 left-0 pointer-events-none">
+        <div className="relative w-full h-[500px] overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:hidden bg-void border border-white/10 cursor-grab active:cursor-grabbing">
+            {/* Grid Background */}
+            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10 pointer-events-none" />
+
+            <div style={{ width: `${width}px`, height: '500px' }} className="relative flex items-center">
+                <svg width={width} height="500" className="absolute top-0 left-0 pointer-events-none">
                     <defs>
-                        <linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#d946ef" stopOpacity="1" /> {/* Fuchsia */}
-                            <stop offset="50%" stopColor="#8b5cf6" stopOpacity="1" /> {/* Violet */}
-                            <stop offset="100%" stopColor="#3b82f6" stopOpacity="1" /> {/* Blue */}
+                        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.2" />
+                            <stop offset="50%" stopColor="#a855f7" stopOpacity="0.5" />
+                            <stop offset="100%" stopColor="#f472b6" stopOpacity="0.2" />
                         </linearGradient>
-                        <filter id="ribbonGlow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="15" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
                     </defs>
-
-                    {/* Glow Layer */}
-                    <path d={pathD} stroke="url(#ribbonGradient)" strokeWidth="12" fill="none" filter="url(#ribbonGlow)" opacity="0.6" />
-
-                    {/* Main Line */}
-                    <path d={pathD} stroke="url(#ribbonGradient)" strokeWidth="6" fill="none" strokeLinecap="round" />
+                    <path d={pathD} stroke="url(#lineGradient)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
                 </svg>
 
                 {points.map((p, i) => {
                     const skill = sorted[i];
                     const isCompleted = skill.status === 'Completed';
-                    const isProgress = skill.status === 'In Progress';
 
                     return (
                         <motion.button
@@ -112,25 +102,17 @@ const CosmicRoadmap = ({ skills, onNodeClick }: { skills: Skill[], onNodeClick: 
                             transition={{ type: 'spring', stiffness: 200, delay: i * 0.1 }}
                             onClick={() => onNodeClick(skill)}
                             className="absolute group z-10"
-                            style={{ left: p.x - 32, top: p.y - 32 }}
+                            style={{ left: p.x - 24, top: p.y - 24 }}
                         >
-                            {/* Node Halo */}
-                            <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl relative transition-all duration-300 bg-[#1a1a1a] border-4
-                                ${isCompleted ? 'border-pink-500 text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.4)]' :
-                                    isProgress ? 'border-orange-500 text-orange-400 shadow-[0_0_20px_rgba(249,115,22,0.4)] scale-125 z-20' :
-                                        'border-white/10 text-white/20'}
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl relative transition-all duration-300 bg-void border
+                                ${isCompleted ? 'border-emerald-500 text-emerald-400' : 'border-white/20 text-white/40 group-hover:border-white group-hover:text-white'}
                             `}>
-                                {CATEGORY_ICONS[skill.category] || <LuBox />}
-
-                                {isProgress && (
-                                    <div className="absolute inset-0 rounded-full border-2 border-white/50 animate-ping opacity-20" />
-                                )}
+                                {CATEGORY_ICONS[skill.category]}
                             </div>
 
-                            {/* Label */}
-                            <div className={`absolute top-20 left-1/2 -translate-x-1/2 whitespace-nowrap text-center transition-opacity ${isProgress ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`}>
-                                <p className="font-bold text-white mb-2 text-lg shadow-black drop-shadow-md">{skill.title}</p>
-                                <span className="text-xs font-bold font-mono text-white/60 bg-black/60 px-3 py-1 rounded-full border border-white/10">
+                            <div className="absolute top-16 left-1/2 -translate-x-1/2 whitespace-nowrap text-center">
+                                <p className="font-mono text-xs uppercase tracking-wider text-white mb-1 group-hover:text-aurora-cyan transition-colors">{skill.title}</p>
+                                <span className="text-[10px] font-mono text-white/30">
                                     {new Date(skill.target_date).getFullYear()}
                                 </span>
                             </div>
@@ -149,67 +131,66 @@ const AnalyticalView = ({ skills }: { skills: Skill[] }) => {
     const progress = skills.filter(s => s.status === 'In Progress').length;
     const backlog = skills.filter(s => s.status === 'Backlog').length;
 
-    // Categories Breakdown
     const categories: any = {};
     skills.forEach(s => { categories[s.category] = (categories[s.category] || 0) + 1 });
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in zoom-in duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 border border-white/10">
             {/* Progress Circle */}
-            <div className="bg-[#111] border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden">
-                <div className="relative w-48 h-48">
+            <div className="bg-void p-12 flex flex-col items-center justify-center relative hover:bg-white/[0.02] transition-colors">
+                <div className="relative w-40 h-40">
                     <svg className="w-full h-full transform -rotate-90">
-                        <circle cx="96" cy="96" r="88" className="text-white/5" strokeWidth="16" fill="none" stroke="currentColor" />
-                        <circle cx="96" cy="96" r="88" className="text-green-500" strokeWidth="16" fill="none" stroke="currentColor"
-                            strokeDasharray={2 * Math.PI * 88}
-                            strokeDashoffset={2 * Math.PI * 88 * (1 - completed / total || 0)}
+                        <circle cx="80" cy="80" r="70" className="text-white/5" strokeWidth="8" fill="none" stroke="currentColor" />
+                        <circle cx="80" cy="80" r="70" className="text-emerald-500" strokeWidth="8" fill="none" stroke="currentColor"
+                            strokeDasharray={2 * Math.PI * 70}
+                            strokeDashoffset={2 * Math.PI * 70 * (1 - completed / total || 0)}
                             strokeLinecap="round"
                         />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-4xl font-bold text-white">{Math.round((completed / total || 0) * 100)}%</span>
-                        <span className="text-sm text-white/40 uppercase tracking-widest">Mastery</span>
+                        <span className="text-4xl font-display font-medium text-white">{Math.round((completed / total || 0) * 100)}%</span>
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">Mastery</span>
                     </div>
                 </div>
             </div>
 
             {/* Status Cards */}
-            <div className="space-y-4">
-                <div className="bg-purple-500/10 border border-purple-500/20 p-6 rounded-2xl flex items-center justify-between">
+            <div className="grid grid-rows-3 divide-y divide-white/10">
+                <div className="bg-void p-6 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
                     <div>
-                        <p className="text-purple-300 text-xs font-bold uppercase">In Focus</p>
-                        <h3 className="text-3xl font-bold text-white">{progress}</h3>
+                        <p className="text-aurora-purple text-[10px] font-mono uppercase tracking-widest mb-1">In Focus</p>
+                        <h3 className="text-3xl font-display font-medium text-white">{progress}</h3>
                     </div>
-                    <LuBrain className="text-4xl text-purple-400 opacity-50" />
+                    <LuBrain className="text-2xl text-white/20" />
                 </div>
-                <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-2xl flex items-center justify-between">
+                <div className="bg-void p-6 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
                     <div>
-                        <p className="text-blue-300 text-xs font-bold uppercase">Backlog</p>
-                        <h3 className="text-3xl font-bold text-white">{backlog}</h3>
+                        <p className="text-blue-400 text-[10px] font-mono uppercase tracking-widest mb-1">Backlog</p>
+                        <h3 className="text-3xl font-display font-medium text-white">{backlog}</h3>
                     </div>
-                    <LuClock className="text-4xl text-blue-400 opacity-50" />
+                    <LuClock className="text-2xl text-white/20" />
                 </div>
-                <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-2xl flex items-center justify-between">
+                <div className="bg-void p-6 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
                     <div>
-                        <p className="text-green-300 text-xs font-bold uppercase">Completed</p>
-                        <h3 className="text-3xl font-bold text-white">{completed}</h3>
+                        <p className="text-emerald-400 text-[10px] font-mono uppercase tracking-widest mb-1">Completed</p>
+                        <h3 className="text-3xl font-display font-medium text-white">{completed}</h3>
                     </div>
-                    <LuCheck className="text-4xl text-green-400 opacity-50" />
+                    <LuCheck className="text-2xl text-white/20" />
                 </div>
             </div>
 
             {/* Categories Bar */}
-            <div className="bg-[#111] border border-white/10 rounded-3xl p-8">
-                <h3 className="text-white font-bold mb-6 flex items-center gap-2"><LuTrendingUp /> Distribution</h3>
-                <div className="space-y-4">
+            <div className="bg-void p-8 hover:bg-white/[0.02] transition-colors">
+                <h3 className="text-white/40 font-mono text-xs uppercase tracking-widest mb-8 flex items-center gap-2"><LuTrendingUp /> Distribution</h3>
+                <div className="space-y-6">
                     {Object.entries(categories).map(([cat, count]: any) => (
                         <div key={cat}>
-                            <div className="flex justify-between text-xs text-white/60 mb-1">
+                            <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-white/60 mb-2">
                                 <span>{cat}</span>
                                 <span>{count}</span>
                             </div>
-                            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                                <div className={`h-full bg-gradient-to-r ${CATEGORY_COLORS[cat] || 'bg-white'}`} style={{ width: `${(count / total) * 100}%` }} />
+                            <div className="h-px bg-white/10 w-full">
+                                <div className={`h-full bg-white opacity-80`} style={{ width: `${(count / total) * 100}%` }} />
                             </div>
                         </div>
                     ))}
@@ -222,24 +203,24 @@ const AnalyticalView = ({ skills }: { skills: Skill[] }) => {
 // 3. GALLERY GRID VIEW
 const GalleryView = ({ skills, onNodeClick }: { skills: Skill[], onNodeClick: (s: Skill) => void }) => {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10">
             {skills.map(skill => (
                 <div key={skill.id} onClick={() => onNodeClick(skill)}
-                    className="bg-[#111] hover:bg-white/5 border border-white/10 rounded-2xl p-6 cursor-pointer group transition-all hover:-translate-y-1">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${CATEGORY_COLORS[skill.category]} flex items-center justify-center text-white shadow-lg`}>
+                    className="bg-void p-8 cursor-pointer group hover:bg-white/[0.02] transition-colors relative">
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="text-white/40 group-hover:text-aurora-cyan transition-colors">
                             {CATEGORY_ICONS[skill.category]}
                         </div>
-                        <span className={`text-xs px-2 py-1 rounded border 
-                            ${skill.status === 'Completed' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                                skill.status === 'In Progress' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+                        <span className={`text-[10px] px-2 py-0.5 border font-mono uppercase tracking-widest
+                            ${skill.status === 'Completed' ? 'text-emerald-400 border-emerald-500/20' :
+                                skill.status === 'In Progress' ? 'text-aurora-purple border-aurora-purple/20' :
                                     'text-white/40 border-white/10'}`}>
                             {skill.status}
                         </span>
                     </div>
-                    <h3 className="font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">{skill.title}</h3>
-                    <div className="text-xs text-white/40 flex items-center gap-2">
-                        <LuCalendar size={12} /> {new Date(skill.target_date).toLocaleDateString()}
+                    <h3 className="font-display font-medium text-lg text-white mb-2 group-hover:translate-x-1 transition-transform">{skill.title}</h3>
+                    <div className="text-[10px] text-white/30 font-mono uppercase tracking-widest">
+                        Target: {new Date(skill.target_date).toLocaleDateString()}
                     </div>
                 </div>
             ))}
@@ -250,35 +231,34 @@ const GalleryView = ({ skills, onNodeClick }: { skills: Skill[], onNodeClick: (s
 // 4. TABLE VIEW
 const TableView = ({ skills, onNodeClick }: { skills: Skill[], onNodeClick: (s: Skill) => void }) => {
     return (
-        <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden animate-in fade-in duration-300">
+        <div className="border border-white/10 bg-white/[0.02]">
             <table className="w-full text-left text-sm">
-                <thead className="bg-white/5 text-white/40 text-xs uppercase font-bold">
-                    <tr>
-                        <th className="p-4">Title</th>
-                        <th className="p-4">Category</th>
-                        <th className="p-4">Status</th>
-                        <th className="p-4">Date</th>
-                        <th className="p-4 text-right">Action</th>
+                <thead>
+                    <tr className="text-[10px] uppercase font-mono tracking-widest text-white/40 border-b border-white/10">
+                        <th className="p-6 font-normal">Title</th>
+                        <th className="p-6 font-normal">Category</th>
+                        <th className="p-6 font-normal">Status</th>
+                        <th className="p-6 font-normal">Date</th>
+                        <th className="p-6 font-normal text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5 text-white/80">
                     {skills.map(skill => (
-                        <tr key={skill.id} className="hover:bg-white/5 transition-colors">
-                            <td className="p-4 font-bold">{skill.title}</td>
-                            <td className="p-4">
-                                <span className={`flex items-center gap-2`}>
-                                    {CATEGORY_ICONS[skill.category]} {skill.category}
-                                </span>
+                        <tr key={skill.id} className="hover:bg-white/[0.02] transition-colors group">
+                            <td className="p-6 font-display font-medium text-white">{skill.title}</td>
+                            <td className="p-6 font-mono text-xs uppercase tracking-wider text-white/60">
+                                {skill.category}
                             </td>
-                            <td className="p-4">
-                                <span className={`px-2 py-1 rounded text-xs border ${skill.status === 'Completed' ? 'bg-green-500/10 border-green-500/20 text-green-400' :
-                                    skill.status === 'In Progress' ? 'bg-purple-500/10 border-purple-500/20 text-purple-400' :
-                                        'bg-white/5 border-white/10 text-white/40'
+                            <td className="p-6">
+                                <span className={`text-[10px] px-2 py-0.5 border font-mono uppercase tracking-widest
+                                    ${skill.status === 'Completed' ? 'text-emerald-400 border-emerald-500/20' :
+                                        skill.status === 'In Progress' ? 'text-aurora-purple border-aurora-purple/20' :
+                                            'text-white/40 border-white/10'
                                     }`}>{skill.status}</span>
                             </td>
-                            <td className="p-4 text-white/50">{new Date(skill.target_date).toLocaleDateString()}</td>
-                            <td className="p-4 text-right">
-                                <button onClick={() => onNodeClick(skill)} className="text-blue-400 hover:underline">Edit</button>
+                            <td className="p-6 text-white/40 font-mono text-xs">{new Date(skill.target_date).toLocaleDateString()}</td>
+                            <td className="p-6 text-right">
+                                <button onClick={() => onNodeClick(skill)} className="text-white/20 hover:text-white text-[10px] font-mono uppercase tracking-widest transition-colors">Edit</button>
                             </td>
                         </tr>
                     ))}
@@ -293,8 +273,6 @@ const TableView = ({ skills, onNodeClick }: { skills: Skill[], onNodeClick: (s: 
 export default function SkillNexus() {
     const [view, setView] = useState<'roadmap' | 'gallery' | 'table' | 'analytics'>('roadmap');
     const [skills, setSkills] = useState<Skill[]>([]);
-
-    // Modal & Form State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState<'create' | 'edit' | 'detail'>('create');
     const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
@@ -345,7 +323,7 @@ export default function SkillNexus() {
         try {
             if (modalMode === 'edit' && selectedSkill) {
                 await pb.collection('skills').update(selectedSkill.id, formData);
-                setModalMode('detail'); // Return to detail view after save
+                setModalMode('detail');
             } else {
                 await pb.collection('skills').create(formData);
                 setIsModalOpen(false);
@@ -392,38 +370,41 @@ export default function SkillNexus() {
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] font-sans selection:bg-purple-500 selection:text-white pb-20 relative">
-            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="min-h-screen bg-void font-body text-white selection:bg-aurora-purple selection:text-white pb-32 relative">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-aurora-purple/5 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-aurora-cyan/5 rounded-full blur-[120px] pointer-events-none" />
 
             <Navbar />
 
-            <div className="pt-32 px-4 max-w-[1600px] mx-auto w-full relative z-10">
+            <div className="pt-32 px-6 md:px-12 max-w-[1600px] mx-auto w-full relative z-10">
 
                 {/* Header & Controls */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8 border-b border-white/10 pb-8">
                     <div>
-                        <h1 className="text-5xl md:text-6xl font-bold text-white mb-2 tracking-tight">
-                            Skill<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Nexus</span>
+                        <span className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan mb-2 block">
+                            // Skill Tree
+                        </span>
+                        <h1 className="text-4xl md:text-6xl font-display font-medium tracking-tight text-white mb-2">
+                            SKILL <span className="text-white/40">NEXUS</span>
                         </h1>
-                        <p className="text-white/40 text-lg">Mastery is a journey, not a destination.</p>
                     </div>
 
-                    <div className="flex bg-[#111] p-1 rounded-xl border border-white/10">
+                    <div className="flex flex-wrap items-center gap-4">
                         {[
-                            { id: 'roadmap', icon: <LuMap />, label: 'Roadmap' },
-                            { id: 'analytics', icon: <LuTrendingUp />, label: 'Analytics' },
-                            { id: 'gallery', icon: <LuLayoutGrid />, label: 'Gallery' },
-                            { id: 'table', icon: <LuList />, label: 'Table' },
+                            { id: 'roadmap', icon: <LuMap />, label: 'Path' },
+                            { id: 'analytics', icon: <LuTrendingUp />, label: 'Data' },
+                            { id: 'gallery', icon: <LuLayoutGrid />, label: 'Grid' },
+                            { id: 'table', icon: <LuList />, label: 'List' },
                         ].map((v) => (
                             <button key={v.id} onClick={() => setView(v.id as any)}
-                                className={`px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all ${view === v.id ? 'bg-white/10 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}>
+                                className={`px-4 py-2 text-[10px] font-mono uppercase tracking-widest border transition-all flex items-center gap-2
+                                ${view === v.id ? 'bg-white text-black border-white' : 'border-white/10 text-white/40 hover:text-white'}`}>
                                 {v.icon} {v.label}
                             </button>
                         ))}
-                        <div className="w-[1px] h-6 bg-white/10 mx-2 self-center" />
-                        <button onClick={openCreate} className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40">
-                            <LuPlus /> Add
+                        <div className="w-px h-8 bg-white/10 mx-2 hidden md:block" />
+                        <button onClick={openCreate} className="px-6 py-2 bg-aurora-purple text-white hover:bg-aurora-purple/80 font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all">
+                            <LuPlus /> Add Node
                         </button>
                     </div>
                 </div>
@@ -441,75 +422,75 @@ export default function SkillNexus() {
                 {/* --- MODAL --- */}
                 <AnimatePresence>
                     {isModalOpen && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-void/90 backdrop-blur-sm">
                             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                                className="bg-[#121212] border border-white/10 rounded-3xl w-full max-w-5xl p-8 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto">
-                                <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-white/40 hover:text-white"><LuX size={24} /></button>
+                                className="bg-void border border-white/10 w-full max-w-5xl p-12 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto">
+                                <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-white/40 hover:text-white transition-colors"><LuX size={24} /></button>
 
                                 {modalMode === 'detail' && selectedSkill ? (
                                     // DETAIL READ-ONLY VIEW
-                                    <div className="space-y-8">
-                                        <div className="flex items-start gap-6">
-                                            <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${CATEGORY_COLORS[selectedSkill.category]} flex items-center justify-center text-5xl text-white shadow-2xl`}>
-                                                {CATEGORY_ICONS[selectedSkill.category]}
-                                            </div>
+                                    <div className="space-y-12">
+                                        <div className="flex flex-col md:flex-row items-start gap-8 border-b border-white/10 pb-8">
                                             <div className="flex-1">
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${selectedSkill.status === 'Completed' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-purple-500/20 text-purple-400 border-purple-500/30'}`}>
+                                                <div className="flex items-center gap-4 mb-4">
+                                                    <span className={`px-3 py-1 border text-[10px] font-mono uppercase tracking-widest
+                                                        ${selectedSkill.status === 'Completed' ? 'border-emerald-500/20 text-emerald-400' : 'border-white/10 text-white/40'}`}>
                                                         {selectedSkill.status}
                                                     </span>
-                                                    <span className="text-white/40 text-sm flex items-center gap-1"><LuCalendar size={14} /> {new Date(selectedSkill.target_date).toLocaleDateString()}</span>
+                                                    <span className="text-white/40 text-xs font-mono uppercase tracking-widest flex items-center gap-2">
+                                                        <LuCalendar size={12} /> {new Date(selectedSkill.target_date).toLocaleDateString()}
+                                                    </span>
                                                 </div>
-                                                <h2 className="text-4xl font-bold text-white mb-2">{selectedSkill.title}</h2>
-                                                <p className="text-white/50 text-lg">{selectedSkill.category}</p>
+                                                <h2 className="text-4xl md:text-5xl font-display font-medium text-white mb-2">{selectedSkill.title}</h2>
+                                                <p className="text-white/40 font-mono text-xs uppercase tracking-widest">// {selectedSkill.category}</p>
                                             </div>
-                                            <button onClick={switchToEdit} className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg font-bold flex items-center gap-2 transition-colors">
-                                                <LuPenTool size={16} /> Edit
+                                            <button onClick={switchToEdit} className="px-6 py-2 border border-white/10 hover:bg-white hover:text-black text-white text-xs font-mono uppercase tracking-widest transition-all flex items-center gap-2">
+                                                <LuPenTool size={14} /> Edit Mode
                                             </button>
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                                             {/* Left: Notes */}
-                                            <div className="md:col-span-2 space-y-4">
-                                                <h3 className="text-xl font-bold text-white border-b border-white/10 pb-4">Deep Dive Notes</h3>
-                                                <div className="prose prose-invert max-w-none text-white/70 bg-white/5 p-6 rounded-2xl border border-white/5">
+                                            <div className="md:col-span-2 space-y-8">
+                                                <h3 className="text-white/40 text-[10px] font-mono uppercase tracking-widest">Deep Dive Notes</h3>
+                                                <div className="prose prose-invert max-w-none text-white/70 font-light leading-relaxed">
                                                     {selectedSkill.description ? (
                                                         <div className="whitespace-pre-wrap">{selectedSkill.description}</div>
                                                     ) : (
-                                                        <span className="italic opacity-50">No notes added yet.</span>
+                                                        <span className="italic opacity-50 font-mono text-xs">No notes added.</span>
                                                     )}
                                                 </div>
                                             </div>
 
                                             {/* Right: Resources & Meta */}
-                                            <div className="space-y-6">
+                                            <div className="space-y-8 border-l border-white/10 pl-8">
                                                 <div>
-                                                    <h3 className="text-sm font-bold text-white/50 uppercase mb-4">Resources</h3>
+                                                    <h3 className="text-white/40 text-[10px] font-mono uppercase tracking-widest mb-4">Resources</h3>
                                                     {selectedSkill.resource_links?.length > 0 ? (
                                                         <div className="space-y-2">
                                                             {selectedSkill.resource_links.map((link, i) => (
-                                                                <a key={i} href={link.url} target="_blank" className="block bg-white/5 hover:bg-blue-600/20 border border-white/10 rounded-xl p-3 transition-colors group">
+                                                                <a key={i} href={link.url} target="_blank" className="block text-sm text-white/60 hover:text-white border-b border-white/10 pb-2 transition-colors group">
                                                                     <div className="flex items-center justify-between">
-                                                                        <span className="text-blue-400 font-medium text-sm group-hover:text-blue-300 truncate">{link.title}</span>
-                                                                        <LuExternalLink className="text-white/20 group-hover:text-white/60" size={14} />
+                                                                        <span className="truncate flex-1">{link.title}</span>
+                                                                        <LuExternalLink className="text-white/20 group-hover:text-white opacity-0 group-hover:opacity-100 transition-all" size={12} />
                                                                     </div>
                                                                 </a>
                                                             ))}
                                                         </div>
-                                                    ) : <div className="text-white/20 text-sm">No links attached.</div>}
+                                                    ) : <div className="text-white/20 text-xs font-mono">No links attached.</div>}
                                                 </div>
 
                                                 <div>
-                                                    <h3 className="text-sm font-bold text-white/50 uppercase mb-4">Attachments</h3>
+                                                    <h3 className="text-white/40 text-[10px] font-mono uppercase tracking-widest mb-4">Attachments</h3>
                                                     {selectedSkill.attachments?.length > 0 ? (
-                                                        <div className="flex flex-wrap gap-2">
+                                                        <div className="flex flex-col gap-2">
                                                             {selectedSkill.attachments.map((file, i) => (
-                                                                <a key={i} href={pb.files.getUrl(selectedSkill, file)} target="_blank" className="flex items-center gap-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 px-3 py-2 rounded-lg border border-purple-500/20 text-xs transition-colors">
-                                                                    <LuFile size={14} /> {file.substring(0, 15)}...
+                                                                <a key={i} href={pb.files.getUrl(selectedSkill, file)} target="_blank" className="flex items-center gap-2 text-xs text-white/60 hover:text-white transition-colors">
+                                                                    <LuFile size={12} /> {file.substring(0, 20)}...
                                                                 </a>
                                                             ))}
                                                         </div>
-                                                    ) : <div className="text-white/20 text-sm">No files uploaded.</div>}
+                                                    ) : <div className="text-white/20 text-xs font-mono">No files uploaded.</div>}
                                                 </div>
                                             </div>
                                         </div>
@@ -517,70 +498,97 @@ export default function SkillNexus() {
                                 ) : (
                                     // EDIT / CREATE FORM
                                     <>
-                                        <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-                                            {modalMode === 'create' ? <LuPlus className="text-purple-400" /> : <LuPenTool className="text-blue-400" />}
-                                            {modalMode === 'create' ? 'New Milestone' : 'Edit Milestone'}
-                                        </h2>
+                                        <div className="mb-12 border-b border-white/10 pb-6">
+                                            <span className="text-aurora-cyan text-[10px] font-mono uppercase tracking-widest mb-2 block">// {modalMode === 'create' ? 'Initialize' : 'Modify'} Node</span>
+                                            <h2 className="text-3xl font-display font-medium text-white">
+                                                {modalMode === 'create' ? 'New Milestone' : 'Edit Milestone'}
+                                            </h2>
+                                        </div>
 
-                                        <form onSubmit={handleSave} className="space-y-8">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                                <div className="space-y-6">
+                                        <form onSubmit={handleSave} className="space-y-12">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                                <div className="space-y-8">
                                                     {/* Left Column Inputs */}
-                                                    <div><label className="label">Title</label><input required className="input" value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" /></div>
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <div><label className="label">Category</label><select className="input" value={category} onChange={e => setCategory(e.target.value)}>{Object.keys(CATEGORY_COLORS).map(c => <option key={c} value={c}>{c}</option>)}</select></div>
-                                                        <div><label className="label">Target Date</label><input type="date" className="input" value={targetDate} onChange={e => setTargetDate(e.target.value)} /></div>
+                                                    <div className="group">
+                                                        <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Title</label>
+                                                        <input required className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-display text-xl placeholder:text-white/10" value={title} onChange={e => setTitle(e.target.value)} placeholder="Node Title" />
                                                     </div>
-                                                    <div>
-                                                        <label className="label">Status</label>
-                                                        <div className="flex bg-black/40 p-1 rounded-xl border border-white/10">
+
+                                                    <div className="grid grid-cols-2 gap-8">
+                                                        <div className="group">
+                                                            <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Category</label>
+                                                            <select className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-mono text-xs uppercase appearance-none cursor-pointer" value={category} onChange={e => setCategory(e.target.value)}>{Object.keys(CATEGORY_COLORS).map(c => <option key={c} value={c} className="text-black">{c}</option>)}</select>
+                                                        </div>
+                                                        <div className="group">
+                                                            <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Target Date</label>
+                                                            <input type="date" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-mono text-xs uppercase" value={targetDate} onChange={e => setTargetDate(e.target.value)} />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="group">
+                                                        <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-4 block">Status</label>
+                                                        <div className="flex gap-4">
                                                             {['Backlog', 'In Progress', 'Completed'].map(s => (
-                                                                <button key={s} type="button" onClick={() => setStatus(s)} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${status === s ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white'}`}>{s}</button>
+                                                                <button key={s} type="button" onClick={() => setStatus(s)}
+                                                                    className={`px-4 py-2 text-[10px] font-mono uppercase tracking-widest border transition-all
+                                                                    ${status === s ? 'text-white border-white' : 'text-white/40 border-white/10 hover:border-white/40'}`}>
+                                                                    {s}
+                                                                </button>
                                                             ))}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-col">
-                                                    <label className="label">Deep Dive Notes</label>
-                                                    <textarea className="input flex-1 resize-none" value={description} onChange={e => setDescription(e.target.value)} placeholder="Notes..." />
+
+                                                <div className="group h-full flex flex-col">
+                                                    <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Deep Dive Notes</label>
+                                                    <textarea className="flex-1 w-full bg-white/[0.02] border border-white/10 p-4 text-white outline-none focus:border-aurora-purple transition-colors font-body text-sm resize-none" value={description} onChange={e => setDescription(e.target.value)} placeholder="Technical details..." />
                                                 </div>
                                             </div>
 
                                             {/* Resources */}
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/5 pt-8">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-white/10 pt-12">
                                                 <div>
-                                                    <label className="label">Links</label>
-                                                    <div className="space-y-2 mb-3">
+                                                    <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-4 block">Links Library</label>
+                                                    <div className="space-y-4 mb-6">
                                                         {resourceLinks.map((l, i) => (
-                                                            <div key={i} className="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5 text-sm text-blue-400">
-                                                                <LuExternalLink size={14} /> <a href={l.url} target="_blank" className="truncate flex-1 hover:underline">{l.title}</a>
-                                                                <button type="button" onClick={() => setResourceLinks(resourceLinks.filter((_, idx) => idx !== i))} className="text-white/20 hover:text-red-400 p-1"><LuX size={14} /></button>
+                                                            <div key={i} className="flex items-center gap-4 text-sm text-white/80 border-b border-white/5 pb-2">
+                                                                <a href={l.url} target="_blank" className="truncate flex-1 hover:text-aurora-cyan transition-colors">{l.title}</a>
+                                                                <button type="button" onClick={() => setResourceLinks(resourceLinks.filter((_, idx) => idx !== i))} className="text-white/20 hover:text-red-400"><LuX size={14} /></button>
                                                             </div>
                                                         ))}
                                                     </div>
-                                                    <div className="flex gap-2">
-                                                        <input className="input text-sm py-2" value={newLinkTitle} onChange={e => setNewLinkTitle(e.target.value)} placeholder="Title" />
-                                                        <input className="input text-sm py-2" value={newLinkUrl} onChange={e => setNewLinkUrl(e.target.value)} placeholder="URL" />
-                                                        <button type="button" onClick={addLink} className="bg-white/10 hover:bg-white/20 p-2 rounded-lg text-white"><LuPlus /></button>
+                                                    <div className="flex gap-4">
+                                                        <input className="bg-transparent border-b border-white/10 pb-1 text-white text-xs font-mono placeholder:text-white/20 w-1/3" value={newLinkTitle} onChange={e => setNewLinkTitle(e.target.value)} placeholder="Title" />
+                                                        <input className="bg-transparent border-b border-white/10 pb-1 text-white text-xs font-mono placeholder:text-white/20 flex-1" value={newLinkUrl} onChange={e => setNewLinkUrl(e.target.value)} placeholder="URL" />
+                                                        <button type="button" onClick={addLink} className="text-white/40 hover:text-white"><LuPlus /></button>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="label">Attachments</label>
-                                                    <div className="border-2 border-dashed border-white/10 hover:border-purple-500/50 rounded-xl p-6 text-center relative hover:bg-white/5 transition-all">
+                                                    <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-4 block">File Attachments</label>
+                                                    <div className="border border-dashed border-white/20 hover:border-white/50 p-8 text-center relative transition-all group cursor-pointer">
                                                         <input type="file" multiple className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => setAttachments(e.target.files)} />
-                                                        <LuFile className="mx-auto text-2xl text-white/30 mb-2" />
-                                                        <p className="text-xs text-white/50">{attachments ? `${attachments.length} files` : 'Upload Files'}</p>
+                                                        <LuFile className="mx-auto text-2xl text-white/20 group-hover:text-white/60 mb-2 transition-colors" />
+                                                        <p className="text-[10px] font-mono uppercase tracking-widest text-white/40 group-hover:text-white/60">{attachments ? `${attachments.length} files selected` : 'Drop files or click to upload'}</p>
                                                     </div>
                                                     {modalMode === 'edit' && selectedSkill?.attachments?.map((f, i) => (
-                                                        <a key={i} href={pb.files.getUrl(selectedSkill, f)} target="_blank" className="inline-flex items-center gap-1 text-xs text-purple-400 bg-purple-500/10 px-2 py-1 rounded mt-2 mr-2 border border-purple-500/20 hover:bg-purple-500/20"><LuLink size={10} /> {f}</a>
+                                                        <div key={i} className="text-[10px] font-mono text-white/40 mt-2 flex items-center gap-2">
+                                                            <LuLink size={10} /> {f}
+                                                        </div>
                                                     ))}
                                                 </div>
                                             </div>
 
-                                            <div className="flex justify-end gap-3 pt-4">
-                                                {modalMode === 'edit' && <button type="button" onClick={() => handleDelete(selectedSkill!.id)} className="px-4 py-3 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 font-bold mr-auto"><LuTrash /></button>}
-                                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-3 rounded-xl hover:bg-white/5 border border-white/10 text-white transition-colors">Cancel</button>
-                                                <button type="submit" disabled={isLoading} className="px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40">{isLoading ? 'Saving...' : 'Save'}</button>
+                                            <div className="flex justify-between pt-8 border-t border-white/10">
+                                                {modalMode === 'edit' ? (
+                                                    <button type="button" onClick={() => handleDelete(selectedSkill!.id)} className="text-white/20 hover:text-red-500 font-mono text-xs uppercase tracking-widest transition-colors flex items-center gap-2"><LuTrash /> Delete Node</button>
+                                                ) : <div />}
+
+                                                <div className="flex gap-6">
+                                                    <button type="button" onClick={() => setIsModalOpen(false)} className="text-white/40 hover:text-white font-mono text-xs uppercase tracking-widest transition-colors">Cancel</button>
+                                                    <button type="submit" disabled={isLoading} className="bg-white text-black hover:bg-white/90 px-8 py-3 font-mono text-xs uppercase tracking-widest font-bold transition-all">
+                                                        {isLoading ? 'Processing...' : 'Save Changes'}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </form>
                                     </>
@@ -590,12 +598,6 @@ export default function SkillNexus() {
                     )}
                 </AnimatePresence>
             </div>
-
-            <style>{`
-                .label { display: block; color: rgba(255,255,255,0.4); font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
-                .input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.75rem; padding: 0.75rem; color: white; outline: none; transition: all; }
-                .input:focus { border-color: #a855f7; }
-            `}</style>
         </div>
     );
 }

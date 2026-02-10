@@ -1,3 +1,4 @@
+
 import { motion, useScroll, useTransform } from 'framer-motion';
 import type { RefObject } from 'react';
 
@@ -11,57 +12,63 @@ export default function Overlay({ scrollRef }: OverlayProps) {
         offset: ["start start", "end end"]
     });
 
-    // Parallax effects
-    // Section 1: 0-30%
-    const opacity1 = useTransform(scrollYProgress, [0, 0.1, 0.25], [1, 1, 0]);
-    const y1 = useTransform(scrollYProgress, [0, 0.25], [0, -50]);
-
-    // Section 2: 30-50%
-    const opacity2 = useTransform(scrollYProgress, [0.25, 0.35, 0.5, 0.6], [0, 1, 1, 0]);
-    const x2 = useTransform(scrollYProgress, [0.25, 0.6], [-50, 0]);
-
-    // Section 3: 60-80%
-    const opacity3 = useTransform(scrollYProgress, [0.6, 0.7, 0.85, 0.95], [0, 1, 1, 0]);
-    const x3 = useTransform(scrollYProgress, [0.6, 0.9], [50, 0]);
+    const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
+    const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+    const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
 
     return (
-        <div className="absolute top-0 left-0 w-full h-[500vh] pointer-events-none z-10">
-            {/* Section 1 */}
+        <div className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center">
+            {/* Massive Hero Typography - Sticky feel */}
             <motion.div
-                style={{ opacity: opacity1, y: y1 }}
-                className="fixed top-0 left-0 w-full h-screen flex flex-col items-center justify-center p-4 md:p-12"
+                style={{ opacity, scale, y }}
+                className="text-center relative z-20"
             >
-                <div className="text-center mb-12">
-                    <h1 className="text-6xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-                        Yash Desai
+                <motion.div
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                >
+                    <h1 className="text-[12vw] leading-[0.85] font-display font-bold tracking-tighter text-white mix-blend-difference">
+                        YASH DESAI
                     </h1>
-                    <p className="text-xl md:text-2xl mt-4 text-white/80">Gen AI Engineer</p>
-                </div>
-            </motion.div>
+                </motion.div>
 
-            {/* Section 2 */}
-            <motion.div
-                style={{ opacity: opacity2, x: x2 }}
-                className="fixed top-0 left-0 w-full h-screen flex items-center justify-start pl-[10%] md:pl-[15%]"
-            >
-                <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight max-w-4xl">
-                    Architecting <br /> High-Performance <br /> GenAI Systems.
-                </h2>
-            </motion.div>
-
-            {/* Section 3 */}
-            <motion.div
-                style={{ opacity: opacity3, x: x3 }}
-                className="fixed top-0 left-0 w-full h-screen flex items-center justify-end pr-[10%] md:pr-[15%]"
-            >
-                <div className="text-right max-w-2xl">
-                    <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight mb-6">
-                        Optimizing RAG Retrieval to 18.4ms (p50)
-                    </h2>
-                    <p className="text-xl md:text-2xl text-white/70">
-                        and building autonomous multi-agent pipelines for enterprise scale.
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4, duration: 1 }}
+                    className="flex items-center justify-center gap-6 mt-6 mix-blend-difference"
+                >
+                    <span className="h-[1px] w-12 bg-white/50" />
+                    <p className="font-mono text-sm tracking-widest uppercase text-white/80">
+                        Gen AI Engineer & Architect
                     </p>
-                </div>
+                    <span className="h-[1px] w-12 bg-white/50" />
+                </motion.div>
+            </motion.div>
+
+            {/* Abstract Gradient Orbs */}
+            <div className="absolute inset-0 overflow-hidden mix-blend-screen pointer-events-none">
+                <motion.div
+                    animate={{
+                        scale: [1, 1.2, 1],
+                        rotate: [0, 90, 0],
+                        filter: ["hue-rotate(0deg)", "hue-rotate(90deg)", "hue-rotate(0deg)"]
+                    }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full bg-gradient-to-tr from-aurora-purple/30 to-aurora-fuchsia/20 blur-[120px]"
+                />
+            </div>
+
+            {/* Scroll Indicator */}
+            <motion.div
+                style={{ opacity }}
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            >
+                <span className="text-[10px] uppercase tracking-widest text-white/40 font-mono">
+                    Scroll to Explore
+                </span>
+                <div className="w-[1px] h-12 bg-gradient-to-b from-white/0 via-white/40 to-white/0 animate-pulse" />
             </motion.div>
         </div>
     );

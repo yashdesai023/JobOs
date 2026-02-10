@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { pb } from '../lib/pocketbase';
-import { FaPlus, FaChartBar, FaList, FaTrash, FaExternalLinkAlt, FaChevronDown, FaEdit, FaEye, FaSync } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaChevronDown, FaSync } from 'react-icons/fa';
 
 import { ROLE_OPTIONS, STATUS_OPTIONS, STATUS_COLORS } from '../constants';
-
 
 // --- CUSTOM SELECT COMPONENT ---
 const CustomSelect = ({ label, value, options, onChange }: { label: string, value: string, options: { value: string, label?: string }[], onChange: (val: string) => void }) => {
@@ -28,14 +27,14 @@ const CustomSelect = ({ label, value, options, onChange }: { label: string, valu
 
     return (
         <div className="relative" ref={containerRef}>
-            <label className="block text-white/40 text-xs mb-1 font-bold uppercase tracking-wider">{label}</label>
+            <label className="block text-xs font-mono uppercase tracking-widest text-white/40 mb-2">{label}</label>
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-left flex justify-between items-center focus:border-green-500 transition-colors"
+                className="w-full bg-void border-b border-white/20 pb-2 text-white text-left flex justify-between items-center focus:border-aurora-purple transition-colors font-body"
             >
                 <span className="truncate">{selectedLabel}</span>
-                <FaChevronDown className={`text-white/30 text-xs transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <FaChevronDown className={`text-white/30 text-[10px] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
             <AnimatePresence>
@@ -44,13 +43,13 @@ const CustomSelect = ({ label, value, options, onChange }: { label: string, valu
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute z-50 w-full mt-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl max-h-60 overflow-y-auto"
+                        className="absolute z-50 w-full mt-2 bg-void border border-white/10 shadow-2xl max-h-60 overflow-y-auto"
                     >
                         {options.map((opt) => (
                             <div
                                 key={opt.value}
                                 onClick={() => { onChange(opt.value); setIsOpen(false); }}
-                                className={`px-4 py-3 text-sm cursor-pointer hover:bg-white/5 transition-colors ${opt.value === value ? 'text-green-400 font-bold bg-green-500/10' : 'text-white/80'}`}
+                                className={`px-4 py-3 text-sm cursor-pointer hover:bg-white/5 transition-colors font-mono ${opt.value === value ? 'text-aurora-purple' : 'text-white/60'}`}
                             >
                                 {opt.label || opt.value}
                             </div>
@@ -147,7 +146,7 @@ export default function ApplicationTracker() {
             fetchApplications();
         } catch (error) {
             console.error(error);
-            alert("Failed to save application. Ensure 'applications' collection exists in PocketBase.");
+            alert("Failed to save application.");
         } finally {
             setIsLoading(false);
         }
@@ -185,55 +184,57 @@ export default function ApplicationTracker() {
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] font-sans selection:bg-green-500 selection:text-white pb-20 relative overflow-hidden">
+        <div className="min-h-screen bg-void font-body text-white selection:bg-aurora-purple selection:text-white pb-32 relative overflow-hidden">
             {/* Background Blurs */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] -mt-20 -mr-20 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-green-500/5 rounded-full blur-[120px] -mb-20 -ml-20 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-aurora-purple/5 rounded-full blur-[120px] -mt-20 -mr-20 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-aurora-cyan/5 rounded-full blur-[120px] -mb-20 -ml-20 pointer-events-none" />
 
             <Navbar />
 
-            <div className="pt-32 px-4 max-w-7xl mx-auto w-full relative z-10">
+            <div className="pt-32 px-6 md:px-12 max-w-[1600px] mx-auto w-full relative z-10">
 
                 {/* Header & Controls */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16 border-b border-white/10 pb-8">
                     <div className="w-full md:w-auto">
+                        <span className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan mb-2 block">// Pipeline</span>
                         <motion.h1
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-3xl md:text-4xl font-bold text-white mb-2"
+                            className="text-4xl md:text-6xl font-display font-medium tracking-tight"
                         >
-                            Application Tracker
+                            APPLICATION <br /> <span className="text-white/40">TRACKER</span>
                         </motion.h1>
-                        <p className="text-white/40 text-sm md:text-base">Manage your job search pipeline efficiently.</p>
                     </div>
 
-                    <div className="w-full md:w-auto flex flex-wrap items-center gap-3 bg-white/5 p-1 rounded-xl border border-white/10 backdrop-blur-md">
+                    <div className="w-full md:w-auto flex flex-wrap items-center gap-4">
                         <button
                             onClick={() => setView('table')}
-                            className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all ${view === 'table' ? 'bg-white/10 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                            className={`px-4 py-2 text-xs font-mono uppercase tracking-widest border border-white/10 transition-all ${view === 'table' ? 'bg-white text-black border-white' : 'text-white/40 hover:text-white'}`}
                         >
-                            <FaList /> <span className="hidden sm:inline">Table</span>
+                            Table View
                         </button>
                         <button
                             onClick={() => setView('analytics')}
-                            className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all ${view === 'analytics' ? 'bg-white/10 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                            className={`px-4 py-2 text-xs font-mono uppercase tracking-widest border border-white/10 transition-all ${view === 'analytics' ? 'bg-white text-black border-white' : 'text-white/40 hover:text-white'}`}
                         >
-                            <FaChartBar /> <span className="hidden sm:inline">Analytics</span>
+                            Analytics
                         </button>
                         <button
                             onClick={handleRefresh}
                             disabled={isRefreshing}
-                            className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all text-white/40 hover:text-white hover:bg-white/5 disabled:opacity-50`}
+                            className={`px-4 py-2 text-xs font-mono uppercase tracking-widest border border-white/10 transition-all text-white/40 hover:text-white disabled:opacity-50`}
                             title="Refresh Data"
                         >
-                            <FaSync className={isRefreshing ? "animate-spin text-green-400" : ""} />
+                            <FaSync className={isRefreshing ? "animate-spin text-aurora-cyan" : ""} />
                         </button>
-                        <div className="w-[1px] h-6 bg-white/10 mx-1 hidden md:block" />
+
+                        <div className="w-[1px] h-8 bg-white/10 hidden md:block" />
+
                         <button
                             onClick={() => { resetForm(); setIsModalOpen(true); }}
-                            className="flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:shadow-green-500/20 transition-all shadow-lg min-w-[120px]"
+                            className="px-6 py-3 bg-aurora-purple text-white hover:bg-aurora-purple/80 text-xs font-mono uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(124,58,237,0.3)]"
                         >
-                            <FaPlus /> Add New
+                            + Track New
                         </button>
                     </div>
                 </div>
@@ -246,46 +247,45 @@ export default function ApplicationTracker() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
-                            className="bg-transparent md:bg-[#0a0a0a]/80 md:backdrop-blur-xl md:border md:border-white/10 rounded-2xl md:overflow-hidden md:shadow-2xl"
+                            className="border-t border-white/10"
                         >
                             {/* MOBILE CARD VIEW */}
-                            <div className="md:hidden space-y-4">
+                            <div className="md:hidden space-y-px bg-white/10 border border-white/10">
                                 {applications.length === 0 ? (
-                                    <div className="text-center text-white/20 py-12">No applications yet.</div>
+                                    <div className="text-center text-white/20 py-12 bg-void font-mono text-xs">No applications yet.</div>
                                 ) : (
                                     applications.map((app) => (
-                                        <div key={app.id} className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 shadow-lg relative overflow-hidden">
+                                        <div key={app.id} className="bg-void p-6">
                                             <div className="flex justify-between items-start mb-4 gap-4">
                                                 <div className="min-w-0">
-                                                    <h3 className="font-bold text-white text-lg flex items-center gap-2 truncate">
+                                                    <h3 className="font-display font-medium text-white text-xl flex items-center gap-2 truncate">
                                                         {app.company}
-                                                        {app.url && <a href={app.url} target="_blank" rel="noreferrer" className="text-blue-400 text-xs shrink-0"><FaExternalLinkAlt /></a>}
+                                                        {app.url && <a href={app.url} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white text-xs shrink-0"><FaExternalLinkAlt /></a>}
                                                     </h3>
-                                                    <p className="text-white/50 text-sm truncate">{getRoleLabel(app.role)}</p>
+                                                    <p className="text-white/50 text-xs font-mono uppercase tracking-wider truncate">{getRoleLabel(app.role)}</p>
                                                 </div>
-                                                <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border shrink-0 ${STATUS_COLORS[app.status] || 'bg-white/10 text-white'}`}>
+                                                <span className={`px-2 py-1 text-[10px] font-mono uppercase tracking-widest border shrink-0 ${STATUS_COLORS[app.status] || 'text-white/60 border-white/10'}`}>
                                                     {app.status}
                                                 </span>
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-3 text-sm text-white/60 mb-4">
-                                                <div className="flex items-center gap-2 truncate"><span className="text-white/20">📍</span> {app.location || 'N/A'}</div>
-                                                <div className="flex items-center gap-2 justify-end truncate"><span className="text-white/20">💰</span> {app.salary || 'N/A'}</div>
-                                                <div className="col-span-2 text-xs opacity-40 flex items-center gap-2 pt-2 border-t border-white/5">
-                                                    <span className="uppercase tracking-widest text-[9px]">Applied</span>
-                                                    {new Date(app.date_applied).toLocaleDateString()}
+                                            <div className="grid grid-cols-2 gap-3 text-xs font-mono text-white/40 mb-6">
+                                                <div className="truncate">{app.location || 'N/A'}</div>
+                                                <div className="text-right truncate">{app.salary || 'N/A'}</div>
+                                                <div className="col-span-2 pt-2 border-t border-white/10">
+                                                    Applied: {new Date(app.date_applied).toLocaleDateString()}
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-2 mt-4">
-                                                <Link to={`/tracker/${app.id}`} className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-white text-sm font-bold flex items-center justify-center gap-2 transition-all">
-                                                    <FaEye /> View
+                                            <div className="flex items-center gap-px bg-white/10 border border-white/10">
+                                                <Link to={`/tracker/${app.id}`} className="flex-1 py-3 bg-void hover:bg-white/5 text-white/60 hover:text-white text-[10px] font-mono uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
+                                                    View
                                                 </Link>
-                                                <button onClick={() => handleEdit(app)} className="p-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-sm transition-all" aria-label="Edit">
-                                                    <FaEdit />
+                                                <button onClick={() => handleEdit(app)} className="flex-1 py-3 bg-void hover:bg-white/5 text-white/60 hover:text-aurora-cyan text-[10px] font-mono uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
+                                                    Edit
                                                 </button>
-                                                <button onClick={() => handleDelete(app.id)} className="p-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-sm transition-all" aria-label="Delete">
-                                                    <FaTrash />
+                                                <button onClick={() => handleDelete(app.id)} className="flex-1 py-3 bg-void hover:bg-white/5 text-white/60 hover:text-red-400 text-[10px] font-mono uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
+                                                    Delete
                                                 </button>
                                             </div>
                                         </div>
@@ -297,69 +297,66 @@ export default function ApplicationTracker() {
                             <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-white/5 text-white/40 text-xs uppercase tracking-wider border-b border-white/10">
-                                            <th className="p-4 font-bold">Role & Company</th>
-                                            <th className="p-4 font-bold">Status</th>
-                                            <th className="p-4 font-bold">Date Applied</th>
-                                            <th className="p-4 font-bold">Location / Salary</th>
-                                            <th className="p-4 font-bold text-right">Actions</th>
+                                        <tr className="text-white/40 text-[10px] uppercase font-mono tracking-widest border-b border-white/10">
+                                            <th className="p-6 font-normal">Role & Company</th>
+                                            <th className="p-6 font-normal">Status</th>
+                                            <th className="p-6 font-normal">Date Applied</th>
+                                            <th className="p-6 font-normal">Details</th>
+                                            <th className="p-6 font-normal text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/5">
                                         {applications.length === 0 ? (
                                             <tr>
-                                                <td colSpan={5} className="p-12 text-center text-white/20">
+                                                <td colSpan={5} className="p-12 text-center text-white/20 font-mono text-sm">
                                                     No applications yet. Start by adding one!
                                                 </td>
                                             </tr>
                                         ) : (
                                             applications.map((app) => (
                                                 <tr key={app.id} className="group hover:bg-white/[0.02] transition-colors">
-                                                    <td className="p-4">
-                                                        <div className="font-bold text-white text-lg flex items-center gap-2">
+                                                    <td className="p-6">
+                                                        <div className="font-display font-medium text-white text-lg flex items-center gap-2">
                                                             {app.company}
                                                             {app.url && (
-                                                                <a href={app.url} target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300"><FaExternalLinkAlt className="text-xs" /></a>
+                                                                <a href={app.url} target="_blank" rel="noreferrer" className="text-white/20 hover:text-white transition-colors"><FaExternalLinkAlt className="text-[10px]" /></a>
                                                             )}
                                                         </div>
-                                                        <div className="text-white/50 text-sm">
+                                                        <div className="text-white/40 text-xs font-mono uppercase tracking-wider mt-1">
                                                             {getRoleLabel(app.role)}
                                                         </div>
                                                     </td>
-                                                    <td className="p-4">
-                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold border ${STATUS_COLORS[app.status] || 'bg-white/10 text-white'}`}>
+                                                    <td className="p-6">
+                                                        <span className={`px-3 py-1 text-[10px] font-mono uppercase tracking-widest border ${STATUS_COLORS[app.status] || 'text-white/60 border-white/10'}`}>
                                                             {app.status}
                                                         </span>
                                                     </td>
-                                                    <td className="p-4 text-white/60 text-sm">
+                                                    <td className="p-6 text-white/60 text-sm font-mono">
                                                         {new Date(app.date_applied).toLocaleDateString()}
                                                     </td>
-                                                    <td className="p-4 text-white/60 text-sm">
+                                                    <td className="p-6 text-white/60 text-sm font-mono">
                                                         <div>{app.location || '-'}</div>
                                                         <div className="text-white/30 text-xs">{app.salary}</div>
                                                     </td>
-                                                    <td className="p-4 text-right">
-                                                        <div className="flex items-center justify-end gap-2">
+                                                    <td className="p-6 text-right">
+                                                        <div className="flex items-center justify-end gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             <Link
                                                                 to={`/tracker/${app.id}`}
-                                                                className="p-2 text-white/20 hover:text-green-400 transition-colors"
-                                                                title="View Details"
+                                                                className="text-white/40 hover:text-white transition-colors text-[10px] uppercase tracking-widest font-mono"
                                                             >
-                                                                <FaEye />
+                                                                View
                                                             </Link>
                                                             <button
                                                                 onClick={() => handleEdit(app)}
-                                                                className="p-2 text-white/20 hover:text-blue-400 transition-colors"
-                                                                title="Edit Application"
+                                                                className="text-white/40 hover:text-aurora-cyan transition-colors text-[10px] uppercase tracking-widest font-mono"
                                                             >
-                                                                <FaEdit />
+                                                                Edit
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDelete(app.id)}
-                                                                className="p-2 text-white/20 hover:text-red-400 transition-colors"
-                                                                title="Delete Application"
+                                                                className="text-white/40 hover:text-red-400 transition-colors text-[10px] uppercase tracking-widest font-mono"
                                                             >
-                                                                <FaTrash />
+                                                                Delete
                                                             </button>
                                                         </div>
                                                     </td>
@@ -376,54 +373,52 @@ export default function ApplicationTracker() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 border border-white/10"
                         >
                             {/* KPI CARDS */}
-                            <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><FaList className="text-6xl text-white" /></div>
-                                <h3 className="text-white/40 text-xs uppercase tracking-widest font-bold mb-4">Total Applications</h3>
-                                <div className="text-5xl font-bold text-white mb-2">{applications.length}</div>
-                                <div className="text-green-400 text-sm">Keep passing those pipelines!</div>
+                            <div className="bg-void p-8 group hover:bg-white/[0.02] transition-colors">
+                                <div className="text-white/40 text-[10px] font-mono uppercase tracking-[0.2em] mb-4">Total Applications</div>
+                                <div className="text-6xl font-display font-medium text-white mb-2">{applications.length}</div>
+                                <div className="text-aurora-cyan text-xs font-mono">Keep pushing.</div>
                             </div>
 
-                            <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><FaChartBar className="text-6xl text-purple-500" /></div>
-                                <h3 className="text-white/40 text-xs uppercase tracking-widest font-bold mb-4">Interview Rate</h3>
-                                <div className="text-5xl font-bold text-white mb-2">
+                            <div className="bg-void p-8 group hover:bg-white/[0.02] transition-colors">
+                                <div className="text-white/40 text-[10px] font-mono uppercase tracking-[0.2em] mb-4">Interview Rate</div>
+                                <div className="text-6xl font-display font-medium text-white mb-2">
                                     {applications.length > 0
                                         ? Math.round((applications.filter(a => ['Interview', 'Offer'].includes(a.status)).length / applications.length) * 100)
                                         : 0}%
                                 </div>
-                                <div className="text-purple-400 text-sm">Conversion to Interview</div>
+                                <div className="text-aurora-purple text-xs font-mono">Conversion Strength</div>
                             </div>
 
                             {/* STATUS DISTRIBUTION */}
-                            <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:col-span-2 lg:col-span-1">
-                                <h3 className="text-white/40 text-xs uppercase tracking-widest font-bold mb-6">Pipeline Funnel</h3>
-                                <div className="space-y-3">
+                            <div className="bg-void p-8 md:col-span-2 lg:col-span-1 hover:bg-white/[0.02] transition-colors">
+                                <h3 className="text-white/40 text-[10px] font-mono uppercase tracking-[0.2em] mb-6">Pipeline Funnel</h3>
+                                <div className="space-y-4">
                                     {Object.entries(getStatusCounts()).map(([status, count]: any) => (
                                         <div key={status} className="flex items-center gap-4">
-                                            <div className="w-24 text-white/60 text-sm text-right">{status}</div>
-                                            <div className="flex-1 h-3 bg-white/5 rounded-full overflow-hidden">
+                                            <div className="w-24 text-white/60 text-xs font-mono text-right">{status}</div>
+                                            <div className="flex-1 h-px bg-white/10">
                                                 <div
-                                                    className="h-full bg-blue-500 rounded-full"
-                                                    style={{ width: `${(count / applications.length) * 100}%`, backgroundColor: STATUS_COLORS[status]?.split(' ')[0].replace('bg-', '')?.replace('/20', '') || '#555' }}
+                                                    className="h-full bg-white"
+                                                    style={{ width: `${(count / applications.length) * 100}%` }}
                                                 />
                                             </div>
-                                            <div className="w-8 text-white font-bold text-sm">{count}</div>
+                                            <div className="w-8 text-white font-mono text-xs">{count}</div>
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
                             {/* ROLE DISTRIBUTION */}
-                            <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:col-span-3">
-                                <h3 className="text-white/40 text-xs uppercase tracking-widest font-bold mb-6">Applications by Domain</h3>
-                                <div className="flex flex-wrap gap-3">
+                            <div className="bg-void p-8 md:col-span-3 hover:bg-white/[0.02] transition-colors">
+                                <h3 className="text-white/40 text-[10px] font-mono uppercase tracking-[0.2em] mb-6">Applications by Domain</h3>
+                                <div className="flex flex-wrap gap-4">
                                     {Object.entries(getRoleCounts()).map(([role, count]: any) => (
-                                        <div key={role} className="bg-white/5 border border-white/10 px-4 py-3 rounded-xl flex items-center gap-3">
-                                            <span className="text-white font-bold">{role}</span>
-                                            <span className="bg-white/10 px-2 py-0.5 rounded text-xs text-white/60">{count}</span>
+                                        <div key={role} className="border border-white/10 px-4 py-2 flex items-center gap-3 hover:border-white/40 transition-colors">
+                                            <span className="text-white font-display text-sm">{role}</span>
+                                            <span className="text-white/40 text-xs font-mono">[{count}]</span>
                                         </div>
                                     ))}
                                 </div>
@@ -433,33 +428,32 @@ export default function ApplicationTracker() {
                     )}
                 </AnimatePresence>
 
-                {/* ADD MODAL with Glassmorphism */}
+                {/* ADD MODAL with Minimal Line Style */}
                 <AnimatePresence>
                     {isModalOpen && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/90 backdrop-blur-sm">
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-4xl p-8 shadow-2xl relative overflow-visible max-h-[90vh] overflow-y-auto"
+                                className="bg-void border border-white/10 w-full max-w-4xl p-12 shadow-2xl relative max-h-[90vh] overflow-y-auto"
                             >
-                                {/* Decorative gradient blob */}
-                                <div className="absolute -top-20 -right-20 w-60 h-60 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
+                                <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-white/30 hover:text-white transition-colors font-mono text-xl">✕</button>
 
-                                <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-white/30 hover:text-white transition-colors">✕</button>
-
-                                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                                    <span className="w-2 h-8 bg-green-500 rounded-full inline-block" />
-                                    {editId ? 'Edit Application' : 'Track New Application'}
+                                <span className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan mb-4 block">
+                                    // {editId ? 'Modify Record' : 'New Entry'}
+                                </span>
+                                <h2 className="text-4xl font-display font-medium text-white mb-12">
+                                    APPLICATION DETAILS
                                 </h2>
 
-                                <form onSubmit={handleSubmit} className="space-y-6 relative z-10 text-left">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label className="block text-white/40 text-xs mb-1 font-bold uppercase tracking-wider">Company</label>
+                                <form onSubmit={handleSubmit} className="space-y-12">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                        <div className="group">
+                                            <label className="block text-xs font-mono uppercase tracking-widest text-white/40 mb-2 group-focus-within:text-aurora-purple transition-colors">Company</label>
                                             <input
                                                 required
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:border-green-500 outline-none transition-colors placeholder:text-white/10"
+                                                className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-display text-xl placeholder:text-white/10"
                                                 placeholder="e.g. Google"
                                                 value={formData.company}
                                                 onChange={e => setFormData({ ...formData, company: e.target.value })}
@@ -486,20 +480,20 @@ export default function ApplicationTracker() {
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label className="block text-white/40 text-xs mb-1 font-bold uppercase tracking-wider">Date Applied</label>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                        <div className="group">
+                                            <label className="block text-xs font-mono uppercase tracking-widest text-white/40 mb-2 group-focus-within:text-aurora-purple transition-colors">Date Applied</label>
                                             <input
                                                 type="date"
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:border-green-500 outline-none appearance-none"
+                                                className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-mono text-sm uppercase"
                                                 value={formData.date_applied}
                                                 onChange={e => setFormData({ ...formData, date_applied: e.target.value })}
                                             />
                                         </div>
-                                        <div>
-                                            <label className="block text-white/40 text-xs mb-1 font-bold uppercase tracking-wider">Salary (Optional)</label>
+                                        <div className="group">
+                                            <label className="block text-xs font-mono uppercase tracking-widest text-white/40 mb-2 group-focus-within:text-aurora-purple transition-colors">Salary (Optional)</label>
                                             <input
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:border-green-500 outline-none"
+                                                className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-mono text-sm"
                                                 placeholder="e.g. $140k"
                                                 value={formData.salary}
                                                 onChange={e => setFormData({ ...formData, salary: e.target.value })}
@@ -507,20 +501,20 @@ export default function ApplicationTracker() {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label className="block text-white/40 text-xs mb-1 font-bold uppercase tracking-wider">Location (Optional)</label>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                        <div className="group">
+                                            <label className="block text-xs font-mono uppercase tracking-widest text-white/40 mb-2 group-focus-within:text-aurora-purple transition-colors">Location (Optional)</label>
                                             <input
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:border-green-500 outline-none"
+                                                className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-mono text-sm"
                                                 placeholder="e.g. Remote, NYC"
                                                 value={formData.location}
                                                 onChange={e => setFormData({ ...formData, location: e.target.value })}
                                             />
                                         </div>
-                                        <div>
-                                            <label className="block text-white/40 text-xs mb-1 font-bold uppercase tracking-wider">Job Link (Optional)</label>
+                                        <div className="group">
+                                            <label className="block text-xs font-mono uppercase tracking-widest text-white/40 mb-2 group-focus-within:text-aurora-purple transition-colors">Job Link (Optional)</label>
                                             <input
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:border-green-500 outline-none"
+                                                className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-mono text-sm"
                                                 placeholder="https://..."
                                                 value={formData.url}
                                                 onChange={e => setFormData({ ...formData, url: e.target.value })}
@@ -528,10 +522,10 @@ export default function ApplicationTracker() {
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label className="block text-white/40 text-xs mb-1 font-bold uppercase tracking-wider">Notes (Optional)</label>
+                                    <div className="group">
+                                        <label className="block text-xs font-mono uppercase tracking-widest text-white/40 mb-2 group-focus-within:text-aurora-purple transition-colors">Notes (Optional)</label>
                                         <textarea
-                                            className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:border-green-500 outline-none min-h-[100px]"
+                                            className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors min-h-[100px] font-body text-sm leading-relaxed"
                                             placeholder="Interview details, contact person, etc..."
                                             value={formData.notes}
                                             onChange={e => setFormData({ ...formData, notes: e.target.value })}
@@ -541,9 +535,9 @@ export default function ApplicationTracker() {
                                     <button
                                         type="submit"
                                         disabled={isLoading}
-                                        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:shadow-lg hover:shadow-green-500/20 text-white font-bold py-4 rounded-xl mt-4 transition-all"
+                                        className="w-full bg-white text-black hover:bg-white/90 font-mono uppercase tracking-widest text-xs font-bold py-5 mt-4 transition-all"
                                     >
-                                        {isLoading ? 'Saving...' : (editId ? 'Update Application' : 'Save Application')}
+                                        {isLoading ? 'Processing...' : (editId ? 'Update Record' : 'Save Record')}
                                     </button>
                                 </form>
                             </motion.div>

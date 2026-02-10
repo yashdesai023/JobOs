@@ -84,13 +84,18 @@ export default function ScrollyCanvas() {
     }, [isLoaded]);
 
     return (
-        <div className="h-[500vh] w-full relative bg-background">
+        <div className="h-[500vh] w-full relative bg-[#060608]">
             <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
                 <canvas
                     ref={canvasRef}
                     className="w-full h-full block object-cover"
                 />
-                {!isLoaded && <div className="absolute inset-0 flex items-center justify-center text-white">Loading...</div>}
+                {!isLoaded && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                        <div className="w-8 h-8 border-2 border-accent/20 border-t-accent rounded-full animate-spin" />
+                        <span className="text-white/30 text-sm font-mono tracking-wider">Loading...</span>
+                    </div>
+                )}
             </div>
         </div>
     );

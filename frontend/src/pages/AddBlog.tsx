@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { pb } from '../lib/pocketbase';
 import {
-    LuSave, LuImage, LuType, LuAlignLeft, LuCalendar, LuTag, LuFileText,
+    LuSave, LuImage,
     LuLayoutList, LuLayoutGrid, LuChartPie, LuPlus, LuTrash, LuEye, LuPen, LuX
 } from 'react-icons/lu';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,7 +27,7 @@ export default function BlogManager() {
     const [loading, setLoading] = useState(false);
     const [blogs, setBlogs] = useState<BlogPost[]>([]);
     const [viewMode, setViewMode] = useState<'table' | 'gallery' | 'analytics'>('table');
-    const [isEditing, setIsEditing] = useState(false); // If true, we show the form
+    const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState<string | null>(null);
 
     // Form State
@@ -50,15 +50,12 @@ export default function BlogManager() {
 
     const fetchBlogs = async () => {
         try {
-            // Removing sort for now to debug 400 error
             const records = await pb.collection('blogs').getList<BlogPost>(1, 50, {
-                requestKey: null
+                sort: '-published_date'
             });
             setBlogs(records.items);
-            // set error to null on success
         } catch (error: any) {
             console.error("Error fetching blogs:", error);
-            alert(`Failed to fetch blogs: ${error.message || 'Unknown error'}`);
         }
     };
 
@@ -75,8 +72,6 @@ export default function BlogManager() {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
     };
-
-
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -114,7 +109,8 @@ export default function BlogManager() {
         });
         setEditId(blog.id);
         if (blog.thumbnail) {
-            setPreviewUrl(pb.files.getURL(blog, blog.thumbnail));
+            // Updated to use correct SDK function if needed, or stick to getUrl
+            setPreviewUrl(pb.files.getUrl(blog, blog.thumbnail));
         }
         setIsEditing(true);
     };
@@ -123,10 +119,9 @@ export default function BlogManager() {
         if (window.confirm("Are you sure you want to delete this blog post?")) {
             try {
                 await pb.collection('blogs').delete(id);
-                fetchBlogs(); // Refresh list
+                fetchBlogs();
             } catch (error) {
                 console.error("Error deleting blog:", error);
-                alert("Failed to delete blog.");
             }
         }
     };
@@ -150,7 +145,6 @@ export default function BlogManager() {
                 await pb.collection('blogs').create(data);
             }
 
-            alert(`Blog post ${editId ? 'updated' : 'created'} successfully!`);
             fetchBlogs();
             resetForm();
         } catch (error) {
@@ -163,53 +157,52 @@ export default function BlogManager() {
 
     // Render Logic
     return (
-        <div className="min-h-screen bg-[#050505] text-white selection:bg-purple-500 selection:text-white pb-20">
+        <div className="min-h-screen bg-void text-white font-body selection:bg-aurora-purple selection:text-white pb-32">
             <Navbar />
 
-            <div className="pt-32 px-4 max-w-7xl mx-auto">
+            <div className="pt-32 px-6 md:px-12 max-w-[1600px] mx-auto">
 
                 {/* Header & Controls */}
-                <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8 border-b border-white/10 pb-8">
                     <div>
-                        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 mb-2">
-                            Blog Management
+                        <span className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan mb-2 block">
+                            // CMS Console
+                        </span>
+                        <h1 className="text-4xl md:text-6xl font-display font-medium tracking-tight text-white mb-2">
+                            BLOG <span className="text-white/40">MANAGER</span>
                         </h1>
-                        <p className="text-white/40">Manage your content, analytics, and publication workflow.</p>
+                        <p className="text-white/60 text-lg font-light">
+                            Editorial control center for insights and publications.
+                        </p>
                     </div>
 
-                    <div className="flex items-center gap-4 bg-white/5 p-2 rounded-xl backdrop-blur-md border border-white/10">
+                    <div className="flex items-center gap-4">
                         {!isEditing && (
                             <>
-                                <button
-                                    onClick={() => setViewMode('table')}
-                                    className={`p-3 rounded-lg transition-all ${viewMode === 'table' ? 'bg-purple-500/20 text-purple-400' : 'hover:bg-white/10 text-white/60'}`}
-                                    title="Table View"
-                                >
-                                    <LuLayoutList size={20} />
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('gallery')}
-                                    className={`p-3 rounded-lg transition-all ${viewMode === 'gallery' ? 'bg-purple-500/20 text-purple-400' : 'hover:bg-white/10 text-white/60'}`}
-                                    title="Gallery View"
-                                >
-                                    <LuLayoutGrid size={20} />
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('analytics')}
-                                    className={`p-3 rounded-lg transition-all ${viewMode === 'analytics' ? 'bg-purple-500/20 text-purple-400' : 'hover:bg-white/10 text-white/60'}`}
-                                    title="Analytics View"
-                                >
-                                    <LuChartPie size={20} />
-                                </button>
-                                <div className="w-px h-8 bg-white/10 mx-2" />
+                                {[
+                                    { id: 'table', icon: <LuLayoutList />, label: 'List' },
+                                    { id: 'gallery', icon: <LuLayoutGrid />, label: 'Grid' },
+                                    { id: 'analytics', icon: <LuChartPie />, label: 'Data' },
+                                ].map((v) => (
+                                    <button
+                                        key={v.id}
+                                        onClick={() => setViewMode(v.id as any)}
+                                        className={`px-4 py-2 text-[10px] font-mono uppercase tracking-widest border transition-all flex items-center gap-2
+                                        ${viewMode === v.id ? 'bg-white text-black border-white' : 'border-white/10 text-white/40 hover:text-white'}`}
+                                    >
+                                        {v.icon} {v.label}
+                                    </button>
+                                ))}
+                                <div className="w-px h-8 bg-white/10 mx-2 hidden md:block" />
                             </>
                         )}
 
                         <button
                             onClick={() => isEditing ? resetForm() : setIsEditing(true)}
-                            className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-all ${isEditing ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-white text-black hover:bg-gray-200'}`}
+                            className={`px-4 py-2 font-mono text-[10px] uppercase tracking-widest border transition-all flex items-center gap-2
+                             ${isEditing ? 'border-red-500/50 text-red-400 hover:bg-red-500/10' : 'bg-aurora-purple text-white border-transparent hover:bg-aurora-purple/90'}`}
                         >
-                            {isEditing ? <><LuX /> Cancel</> : <><LuPlus /> New Post</>}
+                            {isEditing ? <><LuX /> Cancel</> : <><LuPlus /> New Article</>}
                         </button>
                     </div>
                 </div>
@@ -223,66 +216,67 @@ export default function BlogManager() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                            className="max-w-4xl mx-auto"
+                            className="max-w-5xl mx-auto"
                         >
-                            <form onSubmit={handleSubmit} className="space-y-8 bg-white/5 border border-white/10 p-8 rounded-3xl backdrop-blur-xl">
-                                <h2 className="text-2xl font-bold mb-6">{editId ? 'Edit Post' : 'Create New Post'}</h2>
+                            <form onSubmit={handleSubmit} className="space-y-12">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                    <div className="space-y-8">
+                                        <div className="group">
+                                            <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Title</label>
+                                            <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-display text-2xl placeholder:text-white/10" placeholder="Article Headline" />
+                                        </div>
+                                        <div className="group">
+                                            <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Slug</label>
+                                            <input type="text" name="slug" value={formData.slug} onChange={handleChange} required className="w-full bg-transparent border-b border-white/20 pb-2 text-white/60 outline-none focus:border-aurora-purple transition-colors font-mono text-xs" placeholder="article-slug" />
+                                        </div>
 
-                                {/* Existing Form Fields (Simplified for Brevity - fully mirrored from original) */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-white/70 flex items-center gap-2"><LuType /> Title</label>
-                                        <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors" />
+                                        <div className="grid grid-cols-2 gap-8">
+                                            <div className="group">
+                                                <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Category</label>
+                                                <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-mono text-xs uppercase appearance-none cursor-pointer">
+                                                    <option value="GenAI" className="text-black">GenAI</option>
+                                                    <option value="Engineering" className="text-black">Engineering</option>
+                                                    <option value="Tutorial" className="text-black">Tutorial</option>
+                                                    <option value="Career" className="text-black">Career</option>
+                                                </select>
+                                            </div>
+                                            <div className="group">
+                                                <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Publish Date</label>
+                                                <input type="date" name="published_date" value={formData.published_date} onChange={handleChange} className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-aurora-purple transition-colors font-mono text-xs uppercase" />
+                                            </div>
+                                        </div>
+
+                                        <div className="group">
+                                            <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Excerpt</label>
+                                            <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} rows={3} className="w-full bg-white/[0.02] border border-white/10 p-4 text-white focus:outline-none focus:border-aurora-purple transition-colors font-body text-sm resize-none" placeholder="Brief summary..." />
+                                        </div>
+
+                                        <div className="group">
+                                            <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Thumbnail</label>
+                                            <div className="relative border border-dashed border-white/20 p-8 text-center hover:bg-white/5 transition-colors cursor-pointer group-hover:border-white/40">
+                                                <input type="file" onChange={handleFileChange} accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                                                {previewUrl ? (
+                                                    <img src={previewUrl} alt="Preview" className="max-h-48 mx-auto shadow-lg" />
+                                                ) : (
+                                                    <div className="text-white/40 text-xs font-mono uppercase tracking-widest">
+                                                        <LuImage className="mx-auto mb-2 text-2xl" />
+                                                        Upload Cover Image
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-white/10">
+                                            <button type="submit" disabled={loading} className="w-full py-4 bg-white text-black hover:bg-white/90 font-mono text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2">
+                                                {loading ? 'Publishing...' : <><LuSave /> Publish Article</>}
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-white/70 flex items-center gap-2"><LuType /> Slug</label>
-                                        <input type="text" name="slug" value={formData.slug} onChange={handleChange} required className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors font-mono text-sm" />
+
+                                    <div className="h-full flex flex-col group">
+                                        <label className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-white">Content (Markdown)</label>
+                                        <textarea name="content" value={formData.content} onChange={handleChange} className="flex-1 w-full bg-white/[0.02] border border-white/10 p-6 text-white focus:outline-none focus:border-aurora-purple transition-colors font-mono text-sm leading-relaxed resize-none h-[800px]" placeholder="# Write your masterpiece..." />
                                     </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-white/70 flex items-center gap-2"><LuTag /> Category</label>
-                                        <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500">
-                                            <option value="GenAI">GenAI</option>
-                                            <option value="Engineering">Engineering</option>
-                                            <option value="Tutorial">Tutorial</option>
-                                            <option value="Career">Career</option>
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-white/70 flex items-center gap-2"><LuCalendar /> Date</label>
-                                        <input type="date" name="published_date" value={formData.published_date} onChange={handleChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500" />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-white/70 flex items-center gap-2"><LuAlignLeft /> Excerpt</label>
-                                    <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} rows={3} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500" />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-white/70 flex items-center gap-2"><LuFileText /> Content</label>
-                                    <textarea name="content" value={formData.content} onChange={handleChange} rows={15} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 font-mono text-sm" />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-white/70 flex items-center gap-2"><LuImage /> Thumbnail</label>
-                                    <div className="relative border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:bg-white/5 transition-colors">
-                                        <input type="file" onChange={handleFileChange} accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                                        {previewUrl ? (
-                                            <img src={previewUrl} alt="Preview" className="max-h-48 mx-auto rounded-lg shadow-lg" />
-                                        ) : (
-                                            <div className="text-white/40">Drop image here or click to upload</div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-end pt-4 gap-4">
-                                    <button type="button" onClick={resetForm} className="px-6 py-3 text-white/60 hover:text-white">Cancel</button>
-                                    <button type="submit" disabled={loading} className="px-8 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl flex items-center gap-2">
-                                        {loading ? 'Saving...' : <><LuSave /> Save Post</>}
-                                    </button>
                                 </div>
                             </form>
                         </motion.div>
@@ -296,61 +290,67 @@ export default function BlogManager() {
                         >
                             {/* TABLE VIEW */}
                             {viewMode === 'table' && (
-                                <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
-                                    <table className="w-full text-left border-collapse">
+                                <div className="border border-white/10 bg-white/[0.02]">
+                                    <table className="w-full text-left">
                                         <thead>
-                                            <tr className="border-b border-white/10 bg-white/5">
-                                                <th className="p-6 font-semibold text-white/60">Title</th>
-                                                <th className="p-6 font-semibold text-white/60">Category</th>
-                                                <th className="p-6 font-semibold text-white/60">Status</th>
-                                                <th className="p-6 font-semibold text-white/60 text-right">Actions</th>
+                                            <tr className="border-b border-white/10 text-[10px] font-mono uppercase tracking-widest text-white/40">
+                                                <th className="p-6 font-normal">Title</th>
+                                                <th className="p-6 font-normal">Category</th>
+                                                <th className="p-6 font-normal">Status</th>
+                                                <th className="p-6 font-normal text-right">Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody className="divide-y divide-white/5">
                                             {blogs.map(blog => (
-                                                <tr key={blog.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                                    <td className="p-6 font-medium text-white">{blog.title}</td>
-                                                    <td className="p-6"><span className="px-3 py-1 rounded-full bg-white/10 text-xs border border-white/10">{blog.category}</span></td>
+                                                <tr key={blog.id} className="hover:bg-white/[0.02] transition-colors group">
+                                                    <td className="p-6 font-display font-medium text-white text-lg">{blog.title}</td>
+                                                    <td className="p-6"><span className="text-white/60 font-mono text-xs uppercase tracking-wider">{blog.category}</span></td>
                                                     <td className="p-6">
-                                                        {blog.published ? <span className="text-green-400 text-sm">● Published</span> : <span className="text-yellow-400 text-sm">● Draft</span>}
+                                                        {blog.published ?
+                                                            <span className="text-[10px] text-emerald-400 border border-emerald-500/20 px-2 py-0.5 font-mono uppercase tracking-widest bg-emerald-500/10">Published</span> :
+                                                            <span className="text-[10px] text-yellow-400 border border-yellow-500/20 px-2 py-0.5 font-mono uppercase tracking-widest bg-yellow-500/10">Draft</span>
+                                                        }
                                                     </td>
-                                                    <td className="p-6 flex justify-end gap-3">
-                                                        <button onClick={() => navigate(`/blogs/${blog.slug}`)} className="p-2 hover:bg-white/10 rounded-lg text-blue-400" title="View"><LuEye /></button>
-                                                        <button onClick={() => handleEdit(blog)} className="p-2 hover:bg-white/10 rounded-lg text-orange-400" title="Edit"><LuPen /></button>
-                                                        <button onClick={() => handleDelete(blog.id)} className="p-2 hover:bg-white/10 rounded-lg text-red-400" title="Delete"><LuTrash /></button>
+                                                    <td className="p-6 flex justify-end gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <button onClick={() => navigate(`/blogs/${blog.slug}`)} className="text-white/40 hover:text-white transition-colors"><LuEye size={18} /></button>
+                                                        <button onClick={() => handleEdit(blog)} className="text-white/40 hover:text-aurora-purple transition-colors"><LuPen size={18} /></button>
+                                                        <button onClick={() => handleDelete(blog.id)} className="text-white/40 hover:text-red-400 transition-colors"><LuTrash size={18} /></button>
                                                     </td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
-                                    {blogs.length === 0 && <div className="p-12 text-center text-white/40">No blogs found. Create your first one!</div>}
+                                    {blogs.length === 0 && <div className="p-12 text-center text-white/40 font-mono text-xs uppercase tracking-widest">No articles found.</div>}
                                 </div>
                             )}
 
                             {/* GALLERY VIEW */}
                             {viewMode === 'gallery' && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 border border-white/10">
                                     {blogs.map(blog => (
-                                        <div key={blog.id} className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden hover:bg-white/10 transition-all group">
-                                            <div className="h-48 bg-black/50 overflow-hidden relative">
+                                        <div key={blog.id} className="bg-void p-0 hover:bg-white/[0.02] transition-colors group relative flex flex-col h-full">
+                                            <div className="h-48 overflow-hidden relative border-b border-white/10">
                                                 {blog.thumbnail ? (
                                                     <img
-                                                        src={pb.files.getURL(blog, blog.thumbnail)}
+                                                        src={pb.files.getUrl(blog, blog.thumbnail)}
                                                         alt={blog.title}
-                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                                                     />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-white/20"><LuImage size={40} /></div>
+                                                    <div className="w-full h-full flex items-center justify-center text-white/10"><LuImage size={32} /></div>
                                                 )}
                                                 <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button onClick={() => handleEdit(blog)} className="p-2 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-purple-600 transition-colors"><LuPen size={14} /></button>
-                                                    <button onClick={() => handleDelete(blog.id)} className="p-2 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-red-600 transition-colors"><LuTrash size={14} /></button>
+                                                    <button onClick={() => handleEdit(blog)} className="p-2 bg-black text-white hover:text-aurora-purple transition-colors border border-white/10"><LuPen size={12} /></button>
+                                                    <button onClick={() => handleDelete(blog.id)} className="p-2 bg-black text-white hover:text-red-400 transition-colors border border-white/10"><LuTrash size={12} /></button>
                                                 </div>
                                             </div>
-                                            <div className="p-6">
-                                                <h3 className="text-xl font-bold mb-2 line-clamp-1">{blog.title}</h3>
-                                                <p className="text-white/50 text-sm mb-4 line-clamp-2">{blog.excerpt}</p>
-                                                <button onClick={() => navigate(`/blogs/${blog.slug}`)} className="text-purple-400 text-sm font-medium hover:text-purple-300">Read Article &rarr;</button>
+                                            <div className="p-8 flex flex-col flex-1">
+                                                <span className="text-[10px] font-mono uppercase tracking-widest text-aurora-cyan mb-2">{blog.category}</span>
+                                                <h3 className="text-xl font-display font-medium text-white mb-4 line-clamp-2">{blog.title}</h3>
+                                                <div className="mt-auto pt-4 border-t border-white/10 flex justify-between items-center">
+                                                    <span className="text-[10px] text-white/30 font-mono">{new Date(blog.published_date).toLocaleDateString()}</span>
+                                                    <button onClick={() => navigate(`/blogs/${blog.slug}`)} className="text-[10px] font-mono uppercase tracking-widest text-white hover:text-aurora-purple transition-colors">Read &rarr;</button>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -359,18 +359,18 @@ export default function BlogManager() {
 
                             {/* ANALYTICS VIEW */}
                             {viewMode === 'analytics' && (
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 p-8 rounded-3xl">
-                                        <h3 className="text-white/60 mb-2">Total Posts</h3>
-                                        <p className="text-5xl font-bold text-white">{blogs.length}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 border border-white/10">
+                                    <div className="bg-void p-12 text-center">
+                                        <h3 className="text-white/40 text-[10px] font-mono uppercase tracking-widest mb-4">Total Articles</h3>
+                                        <p className="text-6xl font-display font-medium text-white">{blogs.length}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 p-8 rounded-3xl">
-                                        <h3 className="text-white/60 mb-2">Total Word Count</h3>
-                                        <p className="text-5xl font-bold text-white">{blogs.reduce((acc, blog) => acc + blog.content.split(' ').length, 0).toLocaleString()}</p>
+                                    <div className="bg-void p-12 text-center">
+                                        <h3 className="text-white/40 text-[10px] font-mono uppercase tracking-widest mb-4">Word Volume</h3>
+                                        <p className="text-6xl font-display font-medium text-white">{blogs.reduce((acc, blog) => acc + blog.content.split(' ').length, 0).toLocaleString()}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 p-8 rounded-3xl">
-                                        <h3 className="text-white/60 mb-2">Published</h3>
-                                        <p className="text-5xl font-bold text-white">{blogs.filter(b => b.published).length}</p>
+                                    <div className="bg-void p-12 text-center">
+                                        <h3 className="text-white/40 text-[10px] font-mono uppercase tracking-widest mb-4">Publication Rate</h3>
+                                        <p className="text-6xl font-display font-medium text-white">{blogs.filter(b => b.published).length}<span className="text-2xl text-white/40">/{blogs.length}</span></p>
                                     </div>
                                 </div>
                             )}

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
+import { LuPlus, LuTrash, LuCopy, LuPen, LuSend, LuBot, LuUser, LuTerminal } from 'react-icons/lu';
 import { API_BASE_URL } from '../lib/api';
 
 interface Message {
@@ -40,7 +40,6 @@ export default function Playground() {
                 const parsed = JSON.parse(savedHelper);
                 setSessions(parsed);
                 if (parsed.length > 0) {
-                    // Load the most recent session
                     const sorted = parsed.sort((a: ChatSession, b: ChatSession) => b.timestamp - a.timestamp);
                     setCurrentSessionId(sorted[0].id);
                     setMessages(sorted[0].messages);
@@ -56,7 +55,6 @@ export default function Playground() {
         }
     }, []);
 
-    // Save sessions whenever they change
     useEffect(() => {
         if (sessions.length > 0) {
             localStorage.setItem('jobos_chat_sessions', JSON.stringify(sessions));
@@ -73,17 +71,17 @@ export default function Playground() {
 
     const startNewChat = () => {
         const newId = Date.now().toString();
-        const initialMsg: Message = { role: 'assistant', content: "Hello! I am your JobOs Assistant. How can I help you regarding your projects or job applications today?" };
+        const initialMsg: Message = { role: 'assistant', content: "JobOs Protocol Initialized. Ready for queries." };
         const newSession: ChatSession = {
             id: newId,
-            title: 'New Chat',
+            title: 'New Session',
             messages: [initialMsg],
             timestamp: Date.now()
         };
         setSessions(prev => [newSession, ...prev]);
         setCurrentSessionId(newId);
         setMessages([initialMsg]);
-        if (window.innerWidth < 768) setIsSidebarOpen(false); // Auto close on mobile
+        if (window.innerWidth < 768) setIsSidebarOpen(false);
     };
 
     const deleteSession = (e: React.MouseEvent, id: string) => {
@@ -102,15 +100,15 @@ export default function Playground() {
     const updateCurrentSession = (updatedMessages: Message[], firstUserMsg?: string) => {
         setSessions(prev => prev.map(session => {
             if (session.id === currentSessionId) {
-                const newTitle = (session.title === 'New Chat' && firstUserMsg)
-                    ? (firstUserMsg.length > 30 ? firstUserMsg.substring(0, 30) + '...' : firstUserMsg)
+                const newTitle = (session.title === 'New Session' && firstUserMsg)
+                    ? (firstUserMsg.length > 20 ? firstUserMsg.substring(0, 20) + '...' : firstUserMsg)
                     : session.title;
 
                 return {
                     ...session,
                     messages: updatedMessages,
                     title: newTitle,
-                    timestamp: Date.now() // Update timestamp to move to top
+                    timestamp: Date.now()
                 };
             }
             return session;
@@ -129,31 +127,23 @@ export default function Playground() {
 
         let currentMsgs = [...messages];
 
-        // Add user message
         if (!textOverride) {
             const userMessage: Message = { role: 'user', content: textToSend };
             currentMsgs = [...currentMsgs, userMessage];
             setMessages(currentMsgs);
             setInput('');
-            // Update Session Title if it's the first user message
             updateCurrentSession(currentMsgs, textToSend);
         }
 
         setIsLoading(true);
-        // Add placeholder for AI response
         const placeholderMsg: Message = { role: 'assistant', content: '' };
         currentMsgs = [...currentMsgs, placeholderMsg];
         setMessages(currentMsgs);
 
         try {
-
-
-            // ...
             const response = await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: textToSend,
                     session_id: currentSessionId || 'default'
@@ -170,11 +160,8 @@ export default function Playground() {
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-
                 const textChunk = decoder.decode(value, { stream: true });
                 aiResponse += textChunk;
-
-                // Real-time UI update
                 setMessages(prev => {
                     const newMessages = [...prev];
                     const lastMsg = newMessages[newMessages.length - 1];
@@ -185,7 +172,6 @@ export default function Playground() {
                 });
             }
 
-            // Final update to session storage after streaming is complete
             setMessages(finalState => {
                 updateCurrentSession(finalState);
                 return finalState;
@@ -196,7 +182,7 @@ export default function Playground() {
             setMessages(prev => {
                 const newMessages = [...prev];
                 const lastMsg = newMessages[newMessages.length - 1];
-                lastMsg.content += "\n**Error**: Connection interrupted.";
+                lastMsg.content += "\n**System Error**: Connection to core interrupted.";
                 updateCurrentSession(newMessages);
                 return newMessages;
             });
@@ -216,108 +202,77 @@ export default function Playground() {
         navigator.clipboard.writeText(text);
     };
 
-
-    const handleEdit = (text: string) => {
-        setInput(text);
-    };
-
-    // Custom renderer for ReactMarkdown
     const components: Components = {
         code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
             return !inline && match ? (
-                <div className="rounded-lg overflow-hidden my-4 shadow-lg border border-white/10">
-                    <div className="bg-[#1e1e1e] px-4 py-1 flex justify-between items-center border-b border-white/5">
-                        <span className="text-xs text-white/40 font-mono">{match[1]}</span>
+                <div className="rounded border border-white/10 overflow-hidden my-4 bg-[#0a0a0a]">
+                    <div className="bg-white/5 px-4 py-1.5 flex justify-between items-center border-b border-white/5">
+                        <span className="text-[10px] text-white/40 font-mono uppercase tracking-widest">{match[1]}</span>
                         <button
                             onClick={() => copyToClipboard(String(children).replace(/\n$/, ''))}
-                            className="text-[10px] text-white/40 hover:text-white transition-colors"
+                            className="text-[10px] text-white/40 hover:text-white transition-colors uppercase tracking-widest flex items-center gap-1"
                         >
-                            Copy Code
+                            <LuCopy size={10} /> Copy
                         </button>
                     </div>
                     <SyntaxHighlighter
                         style={vscDarkPlus}
                         language={match[1]}
                         PreTag="div"
-                        customStyle={{ margin: 0, borderRadius: 0, background: '#1e1e1e' }}
+                        customStyle={{ margin: 0, padding: '1.5rem', background: 'transparent' }}
                         {...props}
                     >
                         {String(children).replace(/\n$/, '')}
                     </SyntaxHighlighter>
                 </div>
             ) : (
-                <code className="bg-white/10 text-pink-300 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+                <code className="bg-white/10 text-aurora-cyan px-1 5 py-0.5 rounded text-xs font-mono" {...props}>
                     {children}
                 </code>
             );
         },
-        table({ children }) {
-            return (
-                <div className="overflow-x-auto my-4 rounded-lg border border-white/10">
-                    <table className="min-w-full divide-y divide-white/10 text-sm text-left">
-                        {children}
-                    </table>
-                </div>
-            );
-        },
-        thead({ children }) {
-            return <thead className="bg-white/5 text-white">{children}</thead>;
-        },
-        th({ children }) {
-            return <th className="px-4 py-3 font-semibold tracking-wider text-purple-300 border-b border-white/10">{children}</th>;
-        },
-        td({ children }) {
-            return <td className="px-4 py-3 border-b border-white/5 text-gray-300">{children}</td>;
-        }
     };
 
     return (
-        <div className="flex h-screen bg-[#050505] font-sans overflow-hidden">
+        <div className="flex h-screen bg-void font-body overflow-hidden selection:bg-aurora-purple selection:text-white">
             {/* Sidebar */}
             <motion.div
                 initial={{ width: 0, opacity: 0 }}
-                animate={{ width: isSidebarOpen ? 280 : 0, opacity: isSidebarOpen ? 1 : 0 }}
-                className="bg-black/95 border-r border-white/5 flex flex-col pt-20 h-full overflow-hidden absolute md:relative z-20 shrink-0"
+                animate={{ width: isSidebarOpen ? 260 : 0, opacity: isSidebarOpen ? 1 : 0 }}
+                className="bg-black/40 border-r border-white/5 flex flex-col pt-24 h-full overflow-hidden absolute md:relative z-20 shrink-0 backdrop-blur-sm"
             >
-                <div className="px-4 mb-6">
+                <div className="px-4 mb-8">
                     <button
                         onClick={startNewChat}
-                        className="w-full flex items-center gap-3 bg-white/5 hover:bg-white/10 text-white/90 px-4 py-3 rounded-xl transition-all border border-white/5 hover:border-purple-500/30 group"
+                        className="w-full flex items-center justify-center gap-2 bg-white text-black hover:bg-white/90 px-4 py-3 font-mono text-xs uppercase tracking-widest font-bold transition-all"
                     >
-                        <div className="p-1.5 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg group-hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-shadow">
-                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                        </div>
-                        <span className="font-medium text-sm">New Chat</span>
+                        <LuPlus /> New Session
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-3 space-y-1">
-                    <div className="px-3 pb-2 text-xs font-semibold text-white/30 uppercase tracking-widest">Recent Activity</div>
+                <div className="flex-1 overflow-y-auto px-4 space-y-1">
+                    <div className="px-2 pb-4 text-[10px] font-mono text-white/20 uppercase tracking-[0.2em]">History</div>
                     {sessions.map(session => (
                         <button
                             key={session.id}
                             onClick={() => loadSession(session)}
-                            className={`w-full text-left px-3 py-3 rounded-xl text-sm transition-all group flex items-center justify-between
+                            className={`w-full text-left px-4 py-3 border-l-2 text-xs font-mono transition-all group flex items-center justify-between
                                 ${currentSessionId === session.id
-                                    ? 'bg-gradient-to-r from-purple-900/20 to-pink-900/10 text-white border border-purple-500/20'
-                                    : 'text-white/60 hover:bg-white/5 hover:text-white'
+                                    ? 'border-aurora-purple bg-white/5 text-white'
+                                    : 'border-transparent text-white/40 hover:text-white hover:bg-white/[0.02]'
                                 }
                             `}
                         >
-                            <span className="truncate flex-1 pr-2">{session.title}</span>
+                            <span className="truncate flex-1 pr-2 uppercase tracking-wide">{session.title}</span>
                             <div
                                 onClick={(e) => deleteSession(e, session.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/20 hover:text-red-400 rounded transition-all"
+                                className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-colors"
                             >
-                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                <LuTrash size={12} />
                             </div>
                         </button>
                     ))}
-                </div>
-
-                <div className="p-4 border-t border-white/5 text-xs text-white/20 text-center">
-                    Stored locally in your browser
                 </div>
             </motion.div>
 
@@ -325,29 +280,24 @@ export default function Playground() {
             <div className="flex-1 flex flex-col relative h-screen w-full">
                 <Navbar />
 
-                {/* Header & Toggle */}
-                <div className="absolute top-24 left-4 z-10">
+                {/* Sidebar Toggle */}
+                <div className="absolute top-24 left-6 z-10">
                     <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="text-white/50 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors"
+                        className="text-white/40 hover:text-white p-2 transition-colors"
                     >
-                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            {isSidebarOpen
-                                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-                                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            }
-                        </svg>
+                        <LuTerminal size={20} />
                     </button>
                 </div>
 
-                <div className="flex-1 flex flex-col pt-32 pb-4 px-4 max-w-5xl mx-auto w-full h-screen">
+                <div className="flex-1 flex flex-col pt-32 pb-4 px-4 md:px-0 max-w-4xl mx-auto w-full h-screen">
                     {/* Chat Area */}
-                    <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-6 relative rounded-3xl bg-[#0a0a0a] border border-white/5 p-6 shadow-2xl">
+                    <div className="flex-1 overflow-y-auto custom-scrollbar space-y-8 relative p-4 md:p-8">
                         {messages.length === 0 && (
                             <div className="absolute inset-0 flex items-center justify-center text-white/10 pointer-events-none">
-                                <div className="text-center">
-                                    <h2 className="text-2xl font-bold text-white/20 mb-2">JobOs Brain</h2>
-                                    <p>Select a chat or start a new one</p>
+                                <div className="text-center font-mono text-xs uppercase tracking-widest">
+                                    <p>System Ready.</p>
+                                    <p className="mt-2 text-white/5">Start a new query.</p>
                                 </div>
                             </div>
                         )}
@@ -360,50 +310,45 @@ export default function Playground() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} group mb-8`}
                                 >
-                                    <div
-                                        className={`
-                                            relative max-w-[90%] md:max-w-[85%] rounded-2xl p-6 shadow-xl border transition-all
-                                            ${msg.role === 'user'
-                                                ? 'bg-gradient-to-br from-purple-900/30 to-purple-800/20 border-purple-500/20 text-white rounded-tr-sm'
-                                                : 'bg-[#111] border-white/5 text-gray-200 rounded-tl-sm'
-                                            }
-                                        `}
-                                    >
-                                        {msg.role === 'assistant' ? (
-                                            <div className="prose prose-invert prose-p:leading-relaxed prose-headings:text-purple-300 prose-a:text-pink-400 prose-strong:text-white prose-table:border-collapse prose-th:border prose-th:border-white/10 prose-td:border prose-td:border-white/10 prose-th:bg-white/5 prose-th:p-3 prose-td:p-3 max-w-none">
-                                                <ReactMarkdown
-                                                    remarkPlugins={[remarkGfm]}
-                                                    components={components}
-                                                >
-                                                    {msg.content}
-                                                </ReactMarkdown>
-                                            </div>
-                                        ) : (
-                                            <p className="whitespace-pre-wrap leading-relaxed text-base">{msg.content}</p>
-                                        )}
+                                    <div className={`flex gap-4 max-w-[90%] md:max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
 
-                                        {/* Action Bar */}
-                                        <div className={`
-                                            absolute -bottom-8 ${msg.role === 'user' ? 'right-0' : 'left-0'} 
-                                            opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-2
+                                        {/* Avatar */}
+                                        <div className={`w-8 h-8 shrink-0 flex items-center justify-center border font-mono text-xs
+                                            ${msg.role === 'user' ? 'border-white text-white' : 'border-aurora-cyan text-aurora-cyan'}
                                         `}>
-                                            <button
-                                                onClick={() => copyToClipboard(msg.content)}
-                                                className="text-[10px] uppercase tracking-wider text-white/30 hover:text-white bg-white/5 hover:bg-white/10 border border-white/5 px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5"
-                                            >
-                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
-                                                Copy
-                                            </button>
+                                            {msg.role === 'user' ? <LuUser /> : <LuBot />}
+                                        </div>
 
-                                            {msg.role === 'user' && (
-                                                <button
-                                                    onClick={() => handleEdit(msg.content)}
-                                                    className="text-[10px] uppercase tracking-wider text-white/30 hover:text-white bg-white/5 hover:bg-white/10 border border-white/5 px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5"
-                                                >
-                                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                                                    Edit
-                                                </button>
+                                        {/* Content */}
+                                        <div className={`relative p-0 pt-1 transition-all ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
+                                            {msg.role === 'assistant' ? (
+                                                <div className="prose prose-invert prose-p:font-light prose-p:text-white/80 prose-headings:font-display prose-headings:text-white prose-li:text-white/70 prose-strong:text-white prose-pre:bg-transparent prose-pre:p-0 max-w-none">
+                                                    <ReactMarkdown
+                                                        remarkPlugins={[remarkGfm]}
+                                                        components={components}
+                                                    >
+                                                        {msg.content}
+                                                    </ReactMarkdown>
+                                                </div>
+                                            ) : (
+                                                <p className="whitespace-pre-wrap font-light text-lg text-white/90">{msg.content}</p>
                                             )}
+
+                                            {/* Action Bar */}
+                                            <div className={`
+                                                mt-2 flex gap-4 text-[10px] font-mono uppercase tracking-widest text-white/20
+                                                ${msg.role === 'user' ? 'justify-end' : 'justify-start'}
+                                                opacity-0 group-hover:opacity-100 transition-opacity
+                                            `}>
+                                                <button onClick={() => copyToClipboard(msg.content)} className="hover:text-white transition-colors flex items-center gap-1">
+                                                    <LuCopy size={10} /> Copy
+                                                </button>
+                                                {msg.role === 'user' && (
+                                                    <button onClick={() => setInput(msg.content)} className="hover:text-white transition-colors flex items-center gap-1">
+                                                        <LuPen size={10} /> Edit
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -413,19 +358,14 @@ export default function Playground() {
                         {/* Loading Indicator */}
                         <AnimatePresence>
                             {isLoading && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="flex justify-start pl-2"
-                                >
-                                    <div className="bg-[#111] border border-white/5 rounded-2xl rounded-tl-sm p-4 flex items-center gap-3">
-                                        <div className="flex gap-1.5">
-                                            <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }} />
-                                            <div className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />
-                                            <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
-                                        </div>
-                                        <span className="text-xs text-white/30 font-mono uppercase tracking-widest">Processing</span>
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-4 pl-0">
+                                    <div className="w-8 h-8 shrink-0 flex items-center justify-center border border-aurora-cyan text-aurora-cyan font-mono text-xs">
+                                        <LuBot />
+                                    </div>
+                                    <div className="flex items-center gap-2 h-8">
+                                        <span className="w-1.5 h-1.5 bg-aurora-cyan animate-pulse"></span>
+                                        <span className="w-1.5 h-1.5 bg-aurora-cyan animate-pulse delay-75"></span>
+                                        <span className="w-1.5 h-1.5 bg-aurora-cyan animate-pulse delay-150"></span>
                                     </div>
                                 </motion.div>
                             )}
@@ -434,33 +374,29 @@ export default function Playground() {
                     </div>
 
                     {/* Input Area */}
-                    <div className="mt-4 flex-shrink-0 relative z-10 w-full max-w-4xl mx-auto">
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-lg transition-opacity opacity-50 group-hover:opacity-100" />
-                            <div className="relative bg-[#111] border border-white/10 rounded-2xl p-2 flex items-end gap-2 shadow-2xl transition-colors group-hover:border-purple-500/30">
+                    <div className="mt-0 flex-shrink-0 relative z-20 w-full max-w-4xl mx-auto p-4">
+                        <div className="relative group bg-[#050505] border-t border-white/10 pt-4">
+                            <div className="relative flex items-end gap-2 transition-colors">
                                 <textarea
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={handleKeyDown}
-                                    placeholder="Type your message..."
-                                    className="w-full bg-transparent text-white placeholder-white/20 p-4 min-h-[60px] max-h-[200px] resize-none focus:outline-none custom-scrollbar text-[15px] font-light rounded-xl leading-relaxed"
+                                    placeholder="Input Command..."
+                                    className="w-full bg-transparent text-white placeholder-white/20 pb-4 min-h-[50px] max-h-[200px] resize-none focus:outline-none custom-scrollbar font-mono text-sm uppercase tracking-wider"
                                     rows={1}
                                 />
                                 <button
                                     onClick={() => handleSend()}
                                     disabled={isLoading || !input.trim()}
-                                    className="mb-1 mr-1 bg-white/10 hover:bg-white/20 text-white p-3 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                                    className="mb-4 text-white/40 hover:text-white transition-colors disabled:opacity-20"
                                 >
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
-                                    </svg>
+                                    <LuSend size={18} />
                                 </button>
                             </div>
                         </div>
-                        <div className="text-center mt-3 flex justify-center gap-4 text-[10px] text-white/20 font-mono tracking-widest uppercase">
-                            <span>Llama 3 Powered</span>
-                            <span>•</span>
-                            <span>JobOs Secure Env</span>
+                        <div className="flex justify-between text-[8px] font-mono text-white/20 uppercase tracking-[0.2em] mt-2">
+                            <span>JobOs / AI Module v2.0</span>
+                            <span>Llama 3 Instruct</span>
                         </div>
                     </div>
                 </div>

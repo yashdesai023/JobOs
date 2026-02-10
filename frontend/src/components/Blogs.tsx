@@ -1,8 +1,8 @@
 
-import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { pb } from '../lib/pocketbase';
+import { LuArrowUpRight } from 'react-icons/lu';
 
 interface Blog {
     id: string;
@@ -20,7 +20,6 @@ export default function Blogs() {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                // Fetch published blogs, sorted by published_date descending
                 const result = await pb.collection('blogs').getList<Blog>(1, 3, {
                     filter: 'published = true',
                     sort: '-published_date',
@@ -34,65 +33,60 @@ export default function Blogs() {
         fetchBlogs();
     }, []);
 
-    const getImageUrl = (collectionId: string, recordId: string, fileName: string) => {
-        return pb.files.getUrl({ collectionId, id: recordId }, fileName);
-    };
-
     return (
-        <div id="blogs" className="relative z-20 bg-transparent py-20 px-4 md:px-12 w-full">
+        <section className="py-32 px-6 md:px-12 bg-void text-white relative border-t border-white/5">
             <div className="max-w-7xl mx-auto">
-                <motion.h2
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-4xl md:text-6xl font-bold text-white mb-20 text-center"
-                >
-                    Latest Insights
-                </motion.h2>
+                <div className="mb-24 flex items-end justify-between">
+                    <h2 className="text-6xl md:text-8xl font-display font-medium leading-none tracking-tight">
+                        LATEST <br /> <span className="text-white/20">THOUGHTS</span>
+                    </h2>
+                    <Link to="/blogs" className="hidden md:flex items-center gap-2 group border-b border-transparent hover:border-white transition-all pb-1">
+                        <span className="font-mono text-xs uppercase tracking-widest text-white/60 group-hover:text-white">Read All</span>
+                        <LuArrowUpRight className="text-white/60 group-hover:text-white group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 gap-12">
                     {blogs.length === 0 ? (
-                        <div className="col-span-3 text-center text-white/40">Loading latest thoughts...</div>
+                        <div className="text-center font-mono text-sm text-white/40 py-12 border-t border-white/10">Thinking...</div>
                     ) : (
-                        blogs.map((blog, index) => (
-                            <motion.article
+                        blogs.map((blog) => (
+                            <Link
                                 key={blog.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
-                                className="bg-zinc-900/50 border border-white/5 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-all duration-300 group cursor-pointer h-full flex flex-col"
+                                to={`/blogs/${blog.slug || blog.id}`}
+                                className="group block relative border-t border-white/10 pt-12 transition-all duration-500 hover:border-white/40"
                             >
-                                <Link to={`/blogs/${blog.slug || blog.id}`} className="block h-full flex flex-col">
-                                    <div className="h-48 w-full bg-gray-800 relative overflow-hidden">
-                                        {blog.thumbnail ? (
-                                            <img
-                                                src={getImageUrl('blogs', blog.id, blog.thumbnail)}
-                                                alt={blog.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gradient-to-tr from-purple-900/40 to-blue-900/40" />
-                                        )}
+                                <div className="flex flex-col md:flex-row gap-8 md:items-start justify-between">
+                                    <div className="md:w-1/4">
+                                        <div className="flex flex-col gap-2">
+                                            <span className="font-mono text-xs text-aurora-cyan uppercase tracking-wider">
+                                                // {new Date(blog.published_date).toLocaleDateString()}
+                                            </span>
+                                            <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest border border-white/10 px-2 py-1 rounded w-fit">
+                                                {blog.category}
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    <div className="p-8 flex flex-col flex-grow">
-                                        <div className="flex justify-between items-center mb-4 text-xs font-mono uppercase tracking-wider text-white/40">
-                                            <span>{blog.category}</span>
-                                            <span>{new Date(blog.published_date).toLocaleDateString()}</span>
-                                        </div>
-                                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors line-clamp-2">{blog.title}</h3>
-                                        <p className="text-white/60 text-sm leading-relaxed mb-6 line-clamp-3">{blog.excerpt}</p>
-                                        <div className="mt-auto">
-                                            <span className="text-purple-500 text-sm font-medium group-hover:underline decoration-purple-500/50 underline-offset-4">Read Article &rarr;</span>
+                                    <div className="md:w-3/4 pr-12">
+                                        <h3 className="text-3xl md:text-5xl font-display font-medium text-white mb-4 group-hover:text-aurora-purple transition-colors leading-tight">
+                                            {blog.title}
+                                        </h3>
+                                        <p className="text-white/50 text-lg font-light leading-relaxed max-w-2xl group-hover:text-white/70 transition-colors">
+                                            {blog.excerpt}
+                                        </p>
+
+                                        <div className="mt-8 flex items-center gap-2 text-white/40 font-mono text-xs uppercase tracking-wider group-hover:text-white transition-colors">
+                                            <span>Read Article</span>
+                                            <LuArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                         </div>
                                     </div>
-                                </Link>
-                            </motion.article>
+                                </div>
+                            </Link>
                         ))
                     )}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

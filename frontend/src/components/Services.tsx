@@ -1,99 +1,85 @@
 import { motion } from 'framer-motion';
-import { LuBrainCircuit, LuLayoutTemplate, LuRocket, LuCheck } from 'react-icons/lu';
+import { useState } from 'react';
+
 
 const services = [
     {
-        title: "AI & Agentic Systems",
-        description: "Designing autonomous intelligent agents and RAG pipelines that solve complex reasoning tasks with high precision.",
-        icon: <LuBrainCircuit className="text-purple-400" />,
-        features: [
-            "Custom LLM Fine-tuning & Orchestration",
-            "Multi-Agent Workflow Design (LangGraph)",
-            "High-Scale RAG Architectures",
-            "Vector Database Optimization"
-        ]
+        title: "Agentic Systems",
+        id: "01",
+        desc: "Autonomous intelligent agents and RAG pipelines solving complex reasoning tasks.",
+        tags: ["LLM Orchestration", "LangGraph", "Vector DBs"]
     },
     {
-        title: "Full-Stack Architecture",
-        description: "Building end-to-end applications that are secure, scalable, and responsive, using modern frameworks and cloud-native patterns.",
-        icon: <LuLayoutTemplate className="text-blue-400" />,
-        features: [
-            "React / Next.js Enterprise Apps",
-            "Microservices & Serverless Backends",
-            "Real-time Systems (WebSockets)",
-            "API Design & Standardization"
-        ]
+        title: "Full-Stack Arch",
+        id: "02",
+        desc: "Secure, scalable enterprise applications using modern frameworks and cloud-native patterns.",
+        tags: ["Next.js Enterprise", "Microservices", "Real-time API"]
     },
     {
-        title: "Performance Engineering",
-        description: "Optimizing systems for milliseconds of latency, creating high-throughput data pipelines and robust infrastructure.",
-        icon: <LuRocket className="text-orange-400" />,
-        features: [
-            "Low-Latency API Optimization",
-            "Database Indexing & Sharding",
-            "Rust/C++ Systems Integration",
-            "Cloud Infrastructure (AWS/Docker)"
-        ]
+        title: "Performance Eng",
+        id: "03",
+        desc: "Optimizing systems for milliseconds of latency. High-throughput data pipelines.",
+        tags: ["Low-Latency", "Rust Integration", "AWS Scale"]
     }
 ];
 
 export default function Services() {
+    const [activeService, setActiveService] = useState<number | null>(null);
+
     return (
-        <div id="services" className="relative z-20 bg-transparent py-32 px-4 md:px-12 w-full overflow-hidden">
-            {/* Subtle Grid Background */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-
-            <div className="max-w-7xl mx-auto relative">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-24"
-                >
-                    <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-                        Engineering Solutions
+        <section className="py-32 px-6 md:px-12 bg-panel text-white relative">
+            <div className="max-w-7xl mx-auto">
+                <div className="mb-24 flex items-end justify-between">
+                    <h2 className="text-6xl md:text-8xl font-display font-medium leading-none tracking-tight">
+                        CORE <br /> <span className="text-white/20">OFFERINGS</span>
                     </h2>
-                    <p className="text-white/50 text-xl max-w-2xl mx-auto">
-                        I don't just write code; I architect systems that drive business value through intelligence and performance.
-                    </p>
-                </motion.div>
+                    <span className="hidden md:block font-mono text-xs uppercase tracking-widest text-white/40 mb-2">
+                        [ Solutions ]
+                    </span>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="flex flex-col border-t border-white/10">
                     {services.map((service, index) => (
-                        <motion.div
+                        <div
                             key={index}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.2 }}
-                            className="bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-3xl p-8 hover:bg-zinc-800/40 hover:border-purple-500/30 transition-all duration-500 group relative overflow-hidden"
+                            className="group relative border-b border-white/10 py-12 md:py-16 cursor-pointer transition-all duration-500 hover:bg-white/5"
+                            onMouseEnter={() => setActiveService(index)}
+                            onMouseLeave={() => setActiveService(null)}
                         >
-                            {/* Hover Gradient Blob */}
-                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-[80px] group-hover:bg-purple-500/30 transition-colors duration-500" />
+                            <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-8 relative z-10 px-4">
+                                <div className="flex items-baseline gap-8 md:w-1/2">
+                                    <span className="font-mono text-aurora-purple text-sm md:text-base">
+                                        / {service.id}
+                                    </span>
+                                    <h3 className="text-3xl md:text-5xl font-display font-medium text-white group-hover:pl-4 transition-all duration-300">
+                                        {service.title}
+                                    </h3>
+                                </div>
 
-                            <div className="mb-8 p-4 bg-white/5 w-fit rounded-2xl border border-white/5 group-hover:scale-110 transition-transform duration-500">
-                                <span className="text-4xl">{service.icon}</span>
+                                <div className="md:w-1/2 flex flex-col items-start md:items-end gap-6 opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                                    <p className="text-lg font-light max-w-md md:text-right leading-relaxed text-white/80">
+                                        {service.desc}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2 justify-end">
+                                        {service.tags.map((tag, t) => (
+                                            <span key={t} className="px-3 py-1 text-xs font-mono border border-white/20 rounded-full">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
 
-                            <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-purple-300 transition-colors">
-                                {service.title}
-                            </h3>
-                            <p className="text-white/60 leading-relaxed mb-8 h-20">
-                                {service.description}
-                            </p>
-
-                            <ul className="space-y-3">
-                                {service.features.map((feature, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-white/80 text-sm">
-                                        <LuCheck className="text-purple-500/80 flex-shrink-0" />
-                                        {feature}
-                                    </li>
-                                ))}
-                            </ul>
-                        </motion.div>
+                            <motion.div
+                                initial={{ scaleX: 0 }}
+                                animate={{ scaleX: activeService === index ? 1 : 0 }}
+                                transition={{ duration: 0.5, ease: "circOut" }}
+                                className="absolute bottom-0 left-0 h-[1px] w-full bg-aurora-purple origin-left"
+                            />
+                        </div>
                     ))}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

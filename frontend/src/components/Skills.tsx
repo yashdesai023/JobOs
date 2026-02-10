@@ -1,139 +1,141 @@
+import { useRef } from 'react';
 import { motion } from 'framer-motion';
-import {
-    SiPython, SiFastapi, SiPostgresql,
-    SiPytorch, SiOpenai,
-    SiDocker, SiAmazon, SiGit, SiGithubactions,
-    SiSpring, SiRedis
-} from 'react-icons/si';
-import { LuBrain, LuServer, LuContainer, LuCircleCheck, LuBot, LuDatabase, LuCoffee, LuTestTube, LuFileCode, LuGitBranch, LuPackage, LuCode, LuActivity, LuClipboardList } from 'react-icons/lu';
+import { LuBrain, LuServer, LuContainer, LuTestTube } from 'react-icons/lu';
 
 const skillCategories = [
     {
-        title: "Generative AI & Intelligence",
-        icon: <LuBrain className="text-purple-400" />,
+        title: "Intelligence & Agents",
+        icon: <LuBrain className="text-4xl mb-6 text-aurora-purple" />,
+        description: "Architecting autonomous systems and cognitive pipelines.",
         skills: [
-            { name: "LangChain", icon: <LuBot className="text-white" /> }, // Keeping generic bot
-            { name: "RAG Arch", icon: <LuBrain className="text-pink-400" /> },
-            { name: "Pinecone", icon: <LuDatabase className="text-white" /> },
-            { name: "OpenAI API", icon: <SiOpenai className="text-white" /> },
-            { name: "PyTorch", icon: <SiPytorch className="text-[#EE4C2C]" /> },
-            { name: "Agentic Flows", icon: <LuGitBranch className="text-white" /> },
+            { name: "LangChain", level: 90 },
+            { name: "RAG Arch", level: 85 },
+            { name: "OpenAI API", level: 95 },
+            { name: "Agentic Flows", level: 80 }
         ]
     },
     {
-        title: "Backend Engineering (Enterprise)",
-        icon: <LuServer className="text-green-400" />,
+        title: "Enterprise Backend",
+        icon: <LuServer className="text-4xl mb-6 text-aurora-cyan" />,
+        description: "Building resilient, high-throughput server-side infrastructure.",
         skills: [
-            { name: "Python (Adv)", icon: <SiPython className="text-[#3776AB]" /> },
-            { name: "Java (Pro)", icon: <LuCoffee className="text-[#f89820]" /> },
-            { name: "Spring Boot", icon: <SiSpring className="text-[#6DB33F]" /> },
-            { name: "FastAPI", icon: <SiFastapi className="text-[#009688]" /> },
-            { name: "PostgreSQL", icon: <SiPostgresql className="text-[#4169E1]" /> },
-            { name: "Redis", icon: <SiRedis className="text-[#DC382D]" /> },
+            { name: "Python / FastAPI", level: 95 },
+            { name: "Spring Boot", level: 85 },
+            { name: "PostgreSQL", level: 90 },
+            { name: "Redis / Kafka", level: 80 }
         ]
     },
     {
-        title: "Quality & Automation",
-        icon: <LuCircleCheck className="text-blue-400" />,
+        title: "Quality Engineering",
+        icon: <LuTestTube className="text-4xl mb-6 text-emerald-400" />,
+        description: "Ensuring flawless execution through automated rigor.",
         skills: [
-            { name: "Playwright", icon: <LuFileCode className="text-[#2EAD33]" /> },
-            { name: "Selenium", icon: <LuCode className="text-[#43B02A]" /> },
-            { name: "API Testing", icon: <LuTestTube className="text-white" /> },
-            { name: "Accessibility", icon: <LuCircleCheck className="text-white" /> },
-            { name: "JUnit 5", icon: <LuTestTube className="text-[#25A162]" /> },
-            { name: "Allure", icon: <LuClipboardList className="text-white" /> },
+            { name: "Playwright", level: 95 },
+            { name: "Selenium", level: 90 },
+            { name: "API Testing", level: 95 },
+            { name: "CI/CD Pipelines", level: 85 }
         ]
     },
     {
-        title: "MLOps & Operational Excellence",
-        icon: <LuContainer className="text-orange-400" />,
+        title: "DevOps & Cloud",
+        icon: <LuContainer className="text-4xl mb-6 text-orange-400" />,
+        description: "Orchestrating scalable deployments and resource management.",
         skills: [
-            { name: "Docker", icon: <SiDocker className="text-[#2496ED]" /> },
-            { name: "CI/CD", icon: <SiGithubactions className="text-[#2088FF]" /> },
-            { name: "AWS", icon: <SiAmazon className="text-[#FF9900]" /> },
-            { name: "MLflow", icon: <LuActivity className="text-white" /> },
-            { name: "PyPI Dist", icon: <LuPackage className="text-[#3776AB]" /> },
-            { name: "Git", icon: <SiGit className="text-[#F05032]" /> },
+            { name: "Docker & K8s", level: 80 },
+            { name: "AWS Core", level: 75 },
+            { name: "Terraform", level: 70 },
+            { name: "GitHub Actions", level: 90 }
         ]
     }
 ];
 
-const container = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1
-        }
-    }
-};
-
-const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-};
-
 export default function Skills() {
+    const containerRef = useRef<HTMLDivElement>(null);
+
     return (
-        <div id="skills" className="relative z-20 bg-transparent py-32 px-4 md:px-12 w-full overflow-hidden">
-            {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[100px] pointer-events-none" />
+        <section ref={containerRef} className="py-32 px-6 md:px-12 bg-void text-white relative border-t border-white/5 overflow-hidden">
+            {/* Background Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto relative content-center">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-20"
-                >
-                    <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-                        Technical Arsenal
-                    </h2>
-                    <p className="text-white/50 text-xl max-w-2xl mx-auto">
-                        A strategic blend of Generative AI, Enterprise Backend, and Quality Engineering standards.
-                    </p>
-                </motion.div>
+            <div className="max-w-7xl mx-auto relative z-10">
+                <div className="mb-24 text-center md:text-left">
+                    <motion.span
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan mb-4 block"
+                    >
+                        // Technical Arsenal
+                    </motion.span>
+                    <motion.h2
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.1 }}
+                        className="text-5xl md:text-8xl font-display font-medium leading-none tracking-tight"
+                    >
+                        CORE <span className="text-white/20">CAPABILITIES</span>
+                    </motion.h2>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {skillCategories.map((category, idx) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 border border-white/10 shadow-2xl">
+                    {skillCategories.map((category, index) => (
                         <motion.div
-                            key={idx}
-                            initial="hidden"
-                            whileInView="show"
-                            viewport={{ once: true, margin: "-50px" }}
-                            variants={container}
-                            className="bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-3xl p-8 hover:border-white/10 transition-colors group"
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1 }}
+                            className="group bg-void p-12 hover:bg-white/[0.02] transition-colors duration-500 relative overflow-hidden"
                         >
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="p-3 bg-white/5 rounded-xl border border-white/5 group-hover:bg-white/10 transition-colors">
-                                    <span className="text-2xl">{category.icon}</span>
+                            {/* Hover Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                            <div className="relative z-10">
+                                <div className="flex justify-between items-start">
+                                    <div className="p-4 bg-white/[0.03] rounded-2xl border border-white/5 group-hover:border-white/10 transition-colors mb-8 inline-block">
+                                        {category.icon}
+                                    </div>
+                                    <span className="text-[10px] font-mono uppercase text-white/20 tracking-widest group-hover:text-white/40 transition-colors">
+                                        0{index + 1}
+                                    </span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">
+
+                                <h3 className="text-2xl font-display font-medium text-white mb-3 group-hover:text-aurora-cyan transition-colors">
                                     {category.title}
                                 </h3>
-                            </div>
+                                <p className="text-white/40 font-light leading-relaxed mb-8 h-12">
+                                    {category.description}
+                                </p>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                {category.skills.map((skill, skillIdx) => (
-                                    <motion.div
-                                        key={skillIdx}
-                                        variants={item}
-                                        className="flex flex-col items-center justify-center p-4 bg-black/20 rounded-xl border border-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-default group/skill"
-                                    >
-                                        <div className="text-3xl mb-3 opacity-70 group-hover/skill:opacity-100 group-hover/skill:scale-110 transition-all duration-300 filter grayscale group-hover/skill:grayscale-0">
-                                            {skill.icon}
+                                <div className="space-y-4">
+                                    {category.skills.map((skill, i) => (
+                                        <div key={i} className="group/skill">
+                                            <div className="flex justify-between text-xs font-mono uppercase tracking-wider text-white/60 mb-1 group-hover/skill:text-white transition-colors">
+                                                <span>{skill.name}</span>
+                                                <span className="opacity-0 group-hover/skill:opacity-100 transition-opacity text-aurora-cyan">{skill.level}%</span>
+                                            </div>
+                                            <div className="h-0.5 w-full bg-white/10 overflow-hidden">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    whileInView={{ width: `${skill.level}%` }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ duration: 1, delay: 0.2 + (i * 0.1) }}
+                                                    className={`h-full ${index === 0 ? 'bg-aurora-purple' :
+                                                        index === 1 ? 'bg-aurora-cyan' :
+                                                            index === 2 ? 'bg-emerald-400' :
+                                                                'bg-orange-400'
+                                                        }`}
+                                                />
+                                            </div>
                                         </div>
-                                        <span className="text-sm text-white/60 group-hover/skill:text-white font-medium">
-                                            {skill.name}
-                                        </span>
-                                    </motion.div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         </motion.div>
                     ))}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

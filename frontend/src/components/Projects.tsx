@@ -1,73 +1,110 @@
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { projects } from '../lib/projectData';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { LuArrowUpRight } from 'react-icons/lu';
 
 export default function Projects() {
+    const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+    const cursorX = useMotionValue(0);
+    const cursorY = useMotionValue(0);
+
+    // Spring physics for smooth cursor follow
+    const springConfig = { stiffness: 150, damping: 15 };
+    const x = useSpring(cursorX, springConfig);
+    const y = useSpring(cursorY, springConfig);
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        cursorX.set(e.clientX - rect.left);
+        cursorY.set(e.clientY - rect.top);
+    };
+
     return (
-        <div id="work" className="relative z-20 bg-transparent py-20 px-4 md:px-12 w-full">
-            <div className="max-w-7xl mx-auto">
-                <motion.h2
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-4xl md:text-6xl font-bold text-white mb-20 text-center"
-                >
-                    Selected Work
-                </motion.h2>
+        <div
+            className="py-32 px-4 md:px-12 w-full relative overflow-hidden bg-void"
+            onMouseMove={handleMouseMove}
+        >
+            <div className="max-w-7xl mx-auto z-10 relative">
+                <div className="mb-24 flex items-end justify-between border-b border-white/10 pb-8">
+                    <h2 className="text-[10vw] md:text-[5vw] font-display font-medium leading-[0.9] text-white tracking-tighter">
+                        SELECTED <br /> <span className="text-white/20">WORKS</span>
+                    </h2>
+                    <div className="hidden md:block text-right">
+                        <p className="text-sm font-mono text-white/40 uppercase tracking-widest">
+                            [ {projects.length} Case Studies ]
+                        </p>
+                    </div>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="flex flex-col">
                     {projects.map((project, index) => (
-                        <motion.div
+                        <Link
                             key={index}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                            className="group relative h-[500px] rounded-2xl overflow-hidden cursor-pointer"
+                            to={`/work/${project.slug}`}
+                            className="group relative border-b border-white/10 py-12 md:py-16 transition-all duration-300 hover:px-4"
+                            onMouseEnter={() => setHoveredProject(index)}
+                            onMouseLeave={() => setHoveredProject(null)}
                         >
-                            {/* Background Image (Placeholder for now, using gradient) */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-black transition-transform duration-700 group-hover:scale-105">
-                                {/* Ideally we would use an img tag here with project.image */}
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
-                            </div>
-
-                            {/* Content */}
-                            <div className="absolute inset-0 p-8 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                    <span className="inline-block px-3 py-1 bg-purple-500/20 text-purple-300 text-xs font-mono uppercase tracking-wider rounded-full mb-4 border border-purple-500/30">
+                            <div className="flex items-center justify-between relative z-20">
+                                <div className="flex flex-col gap-2">
+                                    <h3 className="text-3xl md:text-5xl font-display font-medium text-white group-hover:text-aurora-purple transition-colors duration-300">
+                                        {project.title}
+                                    </h3>
+                                    <p className="font-mono text-xs md:text-sm text-white/40 uppercase tracking-wider group-hover:text-white/60 transition-colors">
                                         {project.category}
-                                    </span>
-                                    <h3 className="text-3xl font-bold text-white mb-3">{project.title}</h3>
-                                    <p className="text-white/70 mb-6 max-w-md line-clamp-2">
-                                        {project.description}
                                     </p>
+                                </div>
 
-                                    <Link to={`/work/${project.slug}`}>
-                                        <button className="flex items-center gap-2 text-white font-medium group/btn">
-                                            Deep Dive
-                                            <svg className="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                            </svg>
-                                        </button>
-                                    </Link>
+                                <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-10 group-hover:translate-x-0">
+                                    <span className="hidden md:block text-xs font-mono uppercase tracking-widest text-white/40">Read Case Study</span>
+                                    <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center bg-white text-black">
+                                        <LuArrowUpRight size={24} />
+                                    </div>
                                 </div>
                             </div>
-                        </motion.div>
+
+                            {/* Hover Background Reveal Effect */}
+                            <motion.div
+                                initial={{ height: 0 }}
+                                animate={{ height: hoveredProject === index ? "100%" : "0%" }}
+                                transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                                className="absolute top-0 left-0 w-full bg-white/5 -z-10 mix-blend-overlay pointer-events-none"
+                            />
+                        </Link>
                     ))}
                 </div>
 
-                {/* View All Button */}
-                <div className="mt-20 text-center">
+                {/* Floating Image Preview - Desktop Only */}
+                <div className="hidden lg:block pointer-events-none fixed top-0 left-0 w-full h-full z-0 opacity-20 mix-blend-screen isolate pr-12">
+                    {projects.map((project, index) => (
+                        <motion.img
+                            key={index}
+                            src={project.image}
+                            alt={project.title}
+                            className="absolute object-cover w-[400px] h-[500px] rounded-lg brightness-75 grayscale contrast-125"
+                            style={{
+                                x,
+                                y,
+                                top: -250,
+                                left: -200,
+                                opacity: hoveredProject === index ? 0.6 : 0,
+                                scale: hoveredProject === index ? 1 : 0.8,
+                                rotate: hoveredProject === index ? 5 : 0
+                            }}
+                            transition={{ type: "spring", stiffness: 150, damping: 20 }}
+                        />
+                    ))}
+                </div>
+
+                <div className="mt-24 flex justify-center">
                     <a
-                        href="https://github.com/yashdesai023?tab=repositories"
+                        href="https://github.com/yashdesai023"
                         target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-full transition-all group"
+                        className="group flex items-center gap-3 px-8 py-4 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all duration-300"
                     >
-                        <span>Explore Full Engineering Vault (30+ Repos)</span>
-                        <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
+                        <span className="font-mono text-xs uppercase tracking-widest">View Full Archive</span>
+                        <LuArrowUpRight className="group-hover:rotate-45 transition-transform" />
                     </a>
                 </div>
             </div>

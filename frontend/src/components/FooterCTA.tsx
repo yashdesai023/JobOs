@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
+
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
-import { LuMail, LuMapPin, LuPhone, LuSend, LuGlobe } from 'react-icons/lu';
+import { LuMail, LuMapPin, LuSend } from 'react-icons/lu';
 import { useState } from 'react';
 
 export default function FooterCTA() {
@@ -9,165 +9,103 @@ export default function FooterCTA() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setFormState('submitting');
-        // Simulate sending
         setTimeout(() => setFormState('success'), 2000);
     };
 
     return (
-        <footer id="contact" className="relative z-20 bg-black pt-32 pb-10 px-4 md:px-12 border-t border-white/5 overflow-hidden">
-            {/* Background Glows */}
-            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none" />
+        <section className="bg-void text-white relative border-t border-white/5 pt-32 pb-12 px-6 md:px-12">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-24 items-start">
 
-            <div className="max-w-7xl mx-auto relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
-                    {/* Left Column: Contact Info */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <h2 className="text-4xl md:text-6xl font-bold text-white mb-8">
-                            Let's Build Something <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">Extraordinary.</span>
-                        </h2>
-                        <p className="text-white/60 text-lg mb-12 max-w-md leading-relaxed">
-                            Currently open for GenAI, MLOps, and Backend Engineering roles. Ready to architect scalable solutions?
-                        </p>
+                {/* Left: Huge "Let's Talk" */}
+                <div className="md:w-1/2">
+                    <span className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan mb-8 block">
+                        // Reach Out
+                    </span>
+                    <h2 className="text-6xl md:text-9xl font-display font-medium leading-[0.85] tracking-tighter mb-12">
+                        LET'S <br /> <span className="text-white/20">TALK.</span>
+                    </h2>
 
-                        <div className="space-y-8">
-                            <div className="flex items-start gap-4 group">
-                                <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-purple-500/10 transition-colors">
-                                    <LuMail className="text-2xl text-purple-400" />
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-medium mb-1">Email Me</h4>
-                                    <a href="mailto:yashdesai.eng@gmail.com" className="text-white/60 hover:text-white transition-colors">yashdesai.eng@gmail.com</a>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-4 group">
-                                <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-blue-500/10 transition-colors">
-                                    <LuPhone className="text-2xl text-blue-400" />
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-medium mb-1">Call Me</h4>
-                                    <a href="tel:+919860639222" className="text-white/60 hover:text-white transition-colors">+91 98606 39222</a>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-4 group">
-                                <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-green-500/10 transition-colors">
-                                    <LuMapPin className="text-2xl text-green-400" />
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-medium mb-1">Location</h4>
-                                    <p className="text-white/60">Pune, India</p>
-                                </div>
-                            </div>
+                    <div className="flex flex-col gap-6 text-xl font-light">
+                        <a href="mailto:yashdesai.eng@gmail.com" className="group flex items-center gap-4 hover:text-aurora-purple transition-colors">
+                            <LuMail className="text-white/40 group-hover:text-aurora-purple transition-colors" />
+                            <span>yashdesai.eng@gmail.com</span>
+                        </a>
+                        <div className="flex items-center gap-4 text-white/40">
+                            <LuMapPin />
+                            <span>Pune, India</span>
                         </div>
+                    </div>
 
-                        <div className="flex gap-4 mt-12">
-                            {[
-                                { icon: FaGithub, href: "https://github.com/yashdesai023", color: "hover:text-white" },
-                                { icon: FaLinkedin, href: "https://www.linkedin.com/in/yash-s-desai-/", color: "hover:text-blue-400" },
-                                { icon: FaTwitter, href: "https://twitter.com/yashdesaieng", color: "hover:text-sky-400" },
-                                { icon: LuGlobe, href: "https://yash.jobos.online", color: "hover:text-purple-400" } // Portfolio Icon
-                            ].map((social, i) => (
-                                <a
-                                    key={i}
-                                    href={social.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`p-3 bg-white/5 rounded-xl text-white/50 ${social.color} hover:bg-white/10 transition-all transform hover:scale-110`}
-                                >
-                                    <social.icon size={20} />
-                                </a>
-                            ))}
-                        </div>
-                    </motion.div>
+                    <div className="flex gap-6 mt-16 pb-12 md:pb-0">
+                        {[
+                            { icon: <FaGithub />, href: "https://github.com/yashdesai023" },
+                            { icon: <FaLinkedin />, href: "https://www.linkedin.com/in/yash-s-desai-/" },
+                            { icon: <FaTwitter />, href: "https://twitter.com/yashdesaieng" },
+                        ].map((social, i) => (
+                            <a
+                                key={i}
+                                href={social.href}
+                                target="_blank"
+                                className="w-12 h-12 border border-white/10 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:border-white hover:bg-white/5 transition-all duration-300"
+                            >
+                                {social.icon}
+                            </a>
+                        ))}
+                    </div>
+                </div>
 
-                    {/* Right Column: Contact Form */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="bg-zinc-900/30 backdrop-blur-xl border border-white/5 rounded-3xl p-8 md:p-10 relative"
-                    >
-                        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-white/70 ml-1">Your Name</label>
-                                    <input
-                                        type="text"
-                                        placeholder="John Doe"
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-white/70 ml-1">Your Email</label>
-                                    <input
-                                        type="email"
-                                        placeholder="john@example.com"
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-white/70 ml-1">Subject</label>
+                {/* Right: Minimal Line Form */}
+                <div className="md:w-1/2 w-full pt-4">
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-12">
+                        {[
+                            { label: "Your Name", placeholder: "John Doe" },
+                            { label: "Your Email", placeholder: "john@example.com" },
+                            { label: "Subject", placeholder: "Collaboration..." },
+                        ].map((field, i) => (
+                            <div key={i} className="group relative">
+                                <label className="text-xs font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-aurora-purple transition-colors">
+                                    {field.label}
+                                </label>
                                 <input
                                     type="text"
-                                    placeholder="Project Collaboration"
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all"
+                                    placeholder={field.placeholder}
+                                    className="w-full bg-transparent border-b border-white/10 pb-4 text-xl font-display placeholder-white/10 focus:outline-none focus:border-white transition-colors"
                                 />
                             </div>
+                        ))}
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-white/70 ml-1">Message</label>
-                                <textarea
-                                    rows={5}
-                                    placeholder="Tell me about your project..."
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all resize-none"
-                                />
-                            </div>
+                        <div className="group relative">
+                            <label className="text-xs font-mono uppercase tracking-widest text-white/40 mb-2 block group-focus-within:text-aurora-purple transition-colors">
+                                Message
+                            </label>
+                            <textarea
+                                rows={2}
+                                placeholder="Tell me about your project..."
+                                className="w-full bg-transparent border-b border-white/10 pb-4 text-xl font-display placeholder-white/10 focus:outline-none focus:border-white transition-colors resize-none"
+                            />
+                        </div>
 
-                            <button
-                                type="submit"
-                                disabled={formState === 'submitting' || formState === 'success'}
-                                className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 ${formState === 'success'
-                                    ? 'bg-green-500 text-white'
-                                    : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white shadow-lg hover:shadow-purple-500/25'
-                                    }`}
-                            >
-                                {formState === 'idle' && (
-                                    <>
-                                        Send Message <LuSend />
-                                    </>
-                                )}
-                                {formState === 'submitting' && (
-                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                )}
-                                {formState === 'success' && (
-                                    <>
-                                        Message Sent!
-                                    </>
-                                )}
-                            </button>
-                        </form>
-                    </motion.div>
-                </div>
-
-                {/* Bottom Footer */}
-                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/30">
-                    <p>© 2026 Yash Desai. All Rights Reserved.</p>
-                    <div className="flex gap-6">
-                        <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                        <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-                    </div>
-                    <p className="font-mono">Constructed with React & PocketBase</p>
+                        <button
+                            type="submit"
+                            disabled={formState !== 'idle'}
+                            className="w-full py-6 mt-4 border border-white/10 hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center gap-4 font-mono uppercase tracking-widest text-sm group"
+                        >
+                            {formState === 'idle' ? (
+                                <>
+                                    Send Message <LuSend className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
+                                </>
+                            ) : (
+                                "Sending..."
+                            )}
+                        </button>
+                    </form>
                 </div>
             </div>
-        </footer>
+
+            <div className="max-w-7xl mx-auto border-t border-white/5 mt-24 pt-8 flex justify-between text-[10px] md:text-xs font-mono uppercase tracking-widest text-white/20">
+                <p>© 2026 Yash Desai.</p>
+                <p>Engineered with React & PocketBase.</p>
+            </div>
+        </section>
     );
 }

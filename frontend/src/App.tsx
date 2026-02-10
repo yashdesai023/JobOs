@@ -18,7 +18,7 @@ import ApplicationDetails from './pages/ApplicationDetails';
 
 function App() {
   return (
-    <div className="bg-[#121212] min-h-screen text-white selection:bg-purple-500 selection:text-white">
+    <div className="bg-[#060608] min-h-screen text-white font-body">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />

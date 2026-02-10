@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Navbar from '../components/Navbar';
+import PublicNavbar from '../components/PublicNavbar';
 import { projects } from '../lib/projectData';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { LuGithub, LuExternalLink, LuArrowLeft, LuLayers, LuCopy, LuCheck } from 'react-icons/lu';
+import { LuGithub, LuExternalLink, LuArrowLeft, LuCopy, LuCheck } from 'react-icons/lu';
 
 const CodeBlock = ({ inline, className, children, ...props }: any) => {
     const match = /language-(\w+)/.exec(className || '');
@@ -18,38 +18,25 @@ const CodeBlock = ({ inline, className, children, ...props }: any) => {
     };
 
     return !inline ? (
-        <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -2 }}
-            className="relative my-8 rounded-lg overflow-hidden bg-[#0a0a0a] border border-white/10 shadow-2xl group z-10"
-        >
-            <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/5">
-                <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/50" />
-                </div>
-
-                <span className="text-xs text-white/30 font-mono uppercase tracking-widest absolute left-1/2 transform -translate-x-1/2">
+        <div className="relative my-8 rounded-lg overflow-hidden bg-void border border-white/10 group z-10 font-mono text-sm shadow-xl">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/[0.02]">
+                <span className="text-xs text-white/30 uppercase tracking-widest">
                     {match?.[1] || 'CODE'}
                 </span>
-
                 <button
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 text-xs text-white/40 hover:text-purple-300 transition-colors"
+                    className="flex items-center gap-2 text-xs text-white/40 hover:text-white transition-colors uppercase tracking-wider"
                 >
-                    {copied ? <LuCheck size={14} /> : <LuCopy size={14} />}
-                    <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+                    {copied ? <LuCheck size={12} /> : <LuCopy size={12} />}
+                    <span>{copied ? "Copied" : "Copy"}</span>
                 </button>
             </div>
-            <pre className="p-5 overflow-x-auto text-sm font-mono leading-relaxed text-blue-200 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent" {...props}>
+            <pre className="p-6 overflow-x-auto text-white/80 leading-relaxed scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent" {...props}>
                 <code>{children}</code>
             </pre>
-        </motion.div>
+        </div>
     ) : (
-        <code className="bg-white/10 text-purple-300 px-1.5 py-0.5 rounded font-mono text-sm border border-white/5" {...props}>
+        <code className="bg-white/10 text-aurora-cyan px-1.5 py-0.5 rounded font-mono text-xs border border-white/5" {...props}>
             {children}
         </code>
     );
@@ -61,9 +48,9 @@ export default function ProjectDetail() {
 
     if (!project) {
         return (
-            <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center">
-                <h1 className="text-4xl font-bold mb-4">Project Not Found</h1>
-                <Link to="/" className="text-purple-400 hover:text-purple-300 flex items-center gap-2">
+            <div className="min-h-screen bg-void text-white flex flex-col items-center justify-center font-body">
+                <h1 className="text-4xl font-display font-medium mb-4">Project Not Found</h1>
+                <Link to="/" className="text-aurora-purple hover:text-white flex items-center gap-2 font-mono text-xs uppercase tracking-widest">
                     <LuArrowLeft /> Back to Home
                 </Link>
             </div>
@@ -71,78 +58,80 @@ export default function ProjectDetail() {
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white selection:bg-purple-500 selection:text-white pb-20">
-            <Navbar />
+        <div className="min-h-screen bg-void text-white font-body selection:bg-aurora-purple selection:text-white pb-32">
+            <PublicNavbar />
 
-            <div className="pt-32 px-4 md:px-12 max-w-7xl mx-auto">
+            <div className="pt-32 px-6 md:px-12 max-w-5xl mx-auto">
                 {/* Back Link */}
-                <Link to="/#work" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-8 transition-colors">
-                    <LuArrowLeft /> Back to Projects
+                <Link to="/#work" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-12 transition-colors font-mono text-xs uppercase tracking-widest group">
+                    <LuArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Back to Projects
                 </Link>
 
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-12"
+                    className="mb-16 border-b border-white/10 pb-12"
                 >
-                    <div className="inline-block px-3 py-1 bg-white/5 text-purple-300 text-xs font-mono uppercase tracking-wider rounded-full mb-6 border border-purple-500/20">
-                        {project.category}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-8">
+                        <div>
+                            <span className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan mb-4 block">
+                                // Case Study
+                            </span>
+                            <h1 className="text-5xl md:text-7xl font-display font-medium leading-[0.9] tracking-tight text-white mb-6">
+                                {project.title}
+                            </h1>
+                            <div className="inline-block px-3 py-1 border border-white/20 text-white/60 text-xs font-mono uppercase tracking-widest rounded-full">
+                                {project.category}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-3 min-w-[200px]">
+                            {project.productionUrl && project.productionUrl !== '#' && (
+                                <a
+                                    href={project.productionUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-between px-4 py-3 bg-white text-black font-mono text-xs uppercase tracking-widest font-bold hover:bg-white/90 transition-all rounded-sm"
+                                >
+                                    <span>View Live</span> <LuExternalLink />
+                                </a>
+                            )}
+                            {project.githubUrl && project.githubUrl !== '#' && (
+                                <a
+                                    href={project.githubUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-between px-4 py-3 border border-white/20 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all rounded-sm"
+                                >
+                                    <span>Source Code</span> <LuGithub />
+                                </a>
+                            )}
+                        </div>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
-                        {project.title}
-                    </h1>
-                    <p className="text-xl text-white/60 max-w-3xl leading-relaxed mb-8">
+
+                    <p className="text-xl text-white/60 font-light leading-relaxed max-w-3xl">
                         {project.description}
                     </p>
-
-                    <div className="flex flex-wrap gap-4">
-                        {project.productionUrl && project.productionUrl !== '#' && (
-                            <a
-                                href={project.productionUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors"
-                            >
-                                <LuExternalLink /> View Live
-                            </a>
-                        )}
-                        {project.githubUrl && project.githubUrl !== '#' && (
-                            <a
-                                href={project.githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 px-6 py-3 bg-white/10 text-white font-bold rounded-full hover:bg-white/20 transition-colors border border-white/10"
-                            >
-                                <LuGithub /> Source Code
-                            </a>
-                        )}
-                    </div>
                 </motion.div>
 
                 {/* Tech Stack */}
                 {project.techStack && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="mb-16 p-8 bg-white/5 border border-white/5 rounded-3xl backdrop-blur-sm"
-                    >
-                        <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                            <LuLayers /> Technology Stack
+                    <div className="mb-16">
+                        <h3 className="text-xs font-mono uppercase tracking-widest text-white/40 mb-6 flex items-center gap-2">
+                            Technology Stack
                         </h3>
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-2">
                             {project.techStack.map((tech, i) => (
-                                <motion.span
+                                <span
                                     key={i}
-                                    whileHover={{ scale: 1.05 }}
-                                    className="px-4 py-2 bg-black/40 border border-white/10 rounded-lg text-sm text-white/80 font-mono cursor-default hover:border-purple-500/50 transition-colors"
+                                    className="px-3 py-1 bg-white/5 border border-white/10 text-xs text-white/80 font-mono uppercase tracking-wider"
                                 >
                                     {tech}
-                                </motion.span>
+                                </span>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
                 )}
 
                 {/* Content Body */}
@@ -152,40 +141,43 @@ export default function ProjectDetail() {
                     transition={{ delay: 0.2 }}
                     className="prose prose-invert prose-lg max-w-none"
                 >
-                    <div className="bg-white/5 border border-white/5 rounded-3xl p-8 md:p-12 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-b from-purple-500/5 to-transparent pointer-events-none" />
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                                h2: ({ node, ...props }) => <h2 className="text-3xl font-bold mt-16 mb-8 text-white border-b border-white/10 pb-4 relative z-10" {...props} />,
-                                h3: ({ node, ...props }) => <h3 className="text-2xl font-bold mt-12 mb-6 text-purple-300 relative z-10" {...props} />,
-                                p: ({ node, ...props }) => <p className="text-white/70 leading-relaxed mb-6 text-lg relative z-10" {...props} />,
-                                ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-6 space-y-3 text-white/70 text-lg relative z-10" {...props} />,
-                                ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-6 space-y-3 text-white/70 text-lg relative z-10" {...props} />,
-                                li: ({ node, ...props }) => <li className="" {...props} />,
-                                blockquote: ({ node, ...props }) => (
-                                    <motion.blockquote
-                                        whileHover={{ x: 5 }}
-                                        className="border-l-4 border-purple-500 pl-6 py-4 my-10 bg-purple-500/10 italic text-white/90 rounded-r-xl shadow-lg relative z-10"
-                                        {...(props as any)}
-                                    />
-                                ),
-                                code: CodeBlock,
-                                table: ({ node, ...props }) => (
-                                    <div className="overflow-x-auto my-10 rounded-xl border border-white/10 bg-white/5 shadow-xl relative z-10">
-                                        <table className="w-full text-left border-collapse" {...props} />
-                                    </div>
-                                ),
-                                thead: ({ node, ...props }) => <thead className="bg-black/20 text-purple-300" {...props} />,
-                                tbody: ({ node, ...props }) => <tbody className="divide-y divide-white/10" {...props} />,
-                                tr: ({ node, ...props }) => <tr className="hover:bg-white/5 transition-colors" {...props} />,
-                                th: ({ node, ...props }) => <th className="p-5 font-bold text-sm uppercase tracking-wider text-white border-b border-white/10" {...props} />,
-                                td: ({ node, ...props }) => <td className="p-5 text-white/70 border-b border-white/5 text-sm md:text-base leading-relaxed" {...props} />,
-                            }}
-                        >
-                            {project.content || "Detailed case study coming soon."}
-                        </ReactMarkdown>
-                    </div>
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                            h1: ({ node, ...props }) => <h1 className="text-4xl font-display font-medium text-white mt-16 mb-8" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="text-3xl font-display font-medium mt-20 mb-8 text-white border-t border-white/10 pt-8" {...props} />,
+                            h3: ({ node, ...props }) => <h3 className="text-2xl font-display font-medium mt-12 mb-6 text-white" {...props} />,
+                            p: ({ node, ...props }) => <p className="text-white/70 leading-relaxed mb-8 font-light text-lg" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-8 space-y-2 text-white/70 font-light" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-8 space-y-2 text-white/70 font-light" {...props} />,
+                            li: ({ node, ...props }) => <li className="pl-2" {...props} />,
+                            blockquote: ({ node, ...props }) => (
+                                <div className="border-l-2 border-aurora-purple pl-6 py-2 my-10 italic text-white/80 text-xl font-display leading-tight">
+                                    {props.children}
+                                </div>
+                            ),
+                            code: CodeBlock,
+                            table: ({ node, ...props }) => (
+                                <div className="overflow-x-auto my-12 border border-white/10">
+                                    <table className="w-full text-left border-collapse" {...props} />
+                                </div>
+                            ),
+                            thead: ({ node, ...props }) => <thead className="bg-white/5 text-white/40 font-mono text-xs uppercase tracking-wider" {...props} />,
+                            tbody: ({ node, ...props }) => <tbody className="divide-y divide-white/10" {...props} />,
+                            tr: ({ node, ...props }) => <tr className="hover:bg-white/[0.02] transition-colors" {...props} />,
+                            th: ({ node, ...props }) => <th className="p-4 font-normal border-b border-white/10" {...props} />,
+                            td: ({ node, ...props }) => <td className="p-4 text-white/70 text-sm border-b border-white/5" {...props} />,
+                            a: ({ node, ...props }) => <a className="text-white border-b border-white/40 hover:border-white transition-colors pb-px no-underline" {...props} />,
+                            strong: ({ node, ...props }) => <strong className="text-white font-medium" {...props} />,
+                            img: ({ node, ...props }) => (
+                                <div className="my-12 border border-white/10 p-2 bg-white/[0.02]">
+                                    <img className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-500" {...props} />
+                                </div>
+                            )
+                        }}
+                    >
+                        {project.content || "Detailed case study coming soon."}
+                    </ReactMarkdown>
                 </motion.div>
 
             </div>

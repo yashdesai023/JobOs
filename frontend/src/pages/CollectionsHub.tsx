@@ -1,54 +1,67 @@
 import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
-import { collections } from '../lib/collectionConfig';
 import { Link } from 'react-router-dom';
+import { LuDatabase, LuArrowRight } from 'react-icons/lu';
+
+// Start Definitions since import fails
+const collections = [
+    { id: '../tracker', name: 'Applications', description: 'Track job applications and statuses.' },
+    { id: 'projects', name: 'Projects', description: 'Manage portfolio projects and case studies.' },
+    { id: 'blogs', name: 'Blogs', description: 'Write and publish technical articles.' },
+    { id: 'skills', name: 'Skills', description: 'Update technical skill proficiency.' },
+    { id: 'resumes', name: 'Resumes', description: 'Store and manage resume versions.' },
+    { id: 'job_reports', name: 'Job Reports', description: 'Scraped job data from Hunter.' },
+];
 
 export default function CollectionsHub() {
     return (
-        <div className="min-h-screen bg-[#121212] relative overflow-hidden text-white selection:bg-purple-500 selection:text-white">
+        <div className="min-h-screen bg-void relative text-white font-body selection:bg-aurora-purple selection:text-white">
             <Navbar />
 
             {/* Background Ambience */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[128px]" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/20 rounded-full blur-[128px]" />
-            </div>
+            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-aurora-purple/5 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-aurora-cyan/5 rounded-full blur-[120px] pointer-events-none" />
 
-            <div className="relative z-10 pt-32 px-4 md:px-12 max-w-7xl mx-auto">
+            <div className="relative z-10 pt-32 px-6 md:px-12 max-w-7xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="p-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-xl min-h-[60vh]"
                 >
-                    <h1 className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 mb-2">
-                        Collection Manager
-                    </h1>
-                    <p className="text-white/40 mb-12">Select a database to view or manage records.</p>
+                    <div className="mb-16 border-b border-white/10 pb-8">
+                        <span className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan mb-2 block">// Database Manager</span>
+                        <h1 className="text-4xl md:text-6xl font-display font-medium tracking-tight">
+                            COLLECTIONS <br /> <span className="text-white/40">INDEX</span>
+                        </h1>
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {Object.values(collections).map((col, index) => (
-                            <Link key={col.id} to={`/collections/${col.id}`}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 border border-white/10">
+                        {collections.map((col, index) => (
+                            <Link key={col.id} to={`/collections/${col.id}`} className="block h-full">
                                 <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.08)" }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="h-full p-6 bg-white/5 border border-white/10 rounded-2xl cursor-pointer hover:border-purple-500/30 transition-all group"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    className="bg-void p-8 h-full hover:bg-white/[0.02] transition-colors group relative"
                                 >
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="p-3 rounded-full bg-white/5 group-hover:bg-purple-500/20 transition-colors">
-                                            <svg className="w-6 h-6 text-white/70 group-hover:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                                            </svg>
+                                    <div className="flex justify-between items-start mb-12">
+                                        <div className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white/40 group-hover:text-aurora-purple group-hover:border-aurora-purple/30 transition-all">
+                                            <LuDatabase size={18} />
                                         </div>
-                                        <svg className="w-5 h-5 text-white/20 group-hover:text-white/60 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                        </svg>
+                                        <LuArrowRight className="text-white/20 group-hover:text-white group-hover:-rotate-45 transition-all duration-300" size={20} />
                                     </div>
-                                    <h3 className="text-xl font-bold text-white mb-2">{col.name}</h3>
-                                    <p className="text-sm text-white/50">{col.description}</p>
+
+                                    <div>
+                                        <h3 className="text-xl font-display font-medium text-white mb-2 group-hover:text-aurora-purple transition-colors">
+                                            {col.name}
+                                        </h3>
+                                        <p className="text-sm text-white/40 font-light leading-relaxed">
+                                            {col.description}
+                                        </p>
+                                    </div>
+
+                                    {/* Corner Accent */}
+                                    <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </motion.div>
                             </Link>
                         ))}

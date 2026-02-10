@@ -1,10 +1,10 @@
 
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
+import PublicNavbar from '../components/PublicNavbar';
 import FooterCTA from '../components/FooterCTA';
 import { pb } from '../lib/pocketbase';
-import { LuArrowLeft, LuCalendar, LuTag } from 'react-icons/lu';
+import { LuArrowLeft } from 'react-icons/lu';
 
 interface Blog {
     id: string;
@@ -15,6 +15,7 @@ interface Blog {
     content: string;
     published_date: string;
     thumbnail: string;
+    collectionId: string;
 }
 
 export default function BlogDetail() {
@@ -32,10 +33,12 @@ export default function BlogDetail() {
             } catch (error) {
                 console.error("Error fetching blog:", error);
 
-                // Fallback: try by ID if slug not found (handling legacy links if any)
+                // Fallback: try by ID if slug not found
                 try {
-                    const recordById = await pb.collection('blogs').getOne(slug);
-                    setBlog(recordById as unknown as Blog);
+                    if (slug) {
+                        const recordById = await pb.collection('blogs').getOne(slug);
+                        setBlog(recordById as unknown as Blog);
+                    }
                 } catch (err2) {
                     console.error("Also failed by ID:", err2);
                 }
@@ -53,17 +56,17 @@ export default function BlogDetail() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center">
-                <div className="animate-pulse text-xl font-mono text-purple-400">Loading Article...</div>
+            <div className="min-h-screen bg-void text-white flex items-center justify-center font-mono text-xs uppercase tracking-widest">
+                <div className="animate-pulse text-aurora-cyan">Loading Article...</div>
             </div>
         );
     }
 
     if (!blog) {
         return (
-            <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center">
-                <h1 className="text-4xl font-bold mb-4">Article Not Found</h1>
-                <Link to="/" className="text-purple-400 hover:text-purple-300 flex items-center gap-2">
+            <div className="min-h-screen bg-void text-white flex flex-col items-center justify-center font-body">
+                <h1 className="text-4xl font-display font-medium mb-4">Article Not Found</h1>
+                <Link to="/" className="text-aurora-purple hover:text-white flex items-center gap-2 font-mono text-xs uppercase tracking-widest">
                     <LuArrowLeft /> Back to Home
                 </Link>
             </div>
@@ -71,50 +74,54 @@ export default function BlogDetail() {
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white selection:bg-purple-500 selection:text-white">
-            <Navbar />
+        <div className="min-h-screen bg-void text-white font-body selection:bg-aurora-purple selection:text-white">
+            <PublicNavbar />
 
-            {/* Hero Section with Thumbnail Background */}
-            <div className="relative w-full h-[60vh] min-h-[400px]">
-                {blog.thumbnail ? (
-                    <div className="absolute inset-0">
-                        <img
-                            src={getImageUrl('blogs', blog.id, blog.thumbnail)}
-                            alt={blog.title}
-                            className="w-full h-full object-cover opacity-40 mask-image-gradient"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent" />
-                    </div>
-                ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20" />
-                )}
+            {/* Back Link */}
+            <div className="pt-32 px-6 md:px-12 max-w-4xl mx-auto">
+                <Link to="/#blogs" className="text-white/40 hover:text-white inline-flex items-center gap-2 mb-12 transition-colors w-fit group font-mono text-xs uppercase tracking-widest">
+                    <LuArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Back to Insights
+                </Link>
+            </div>
 
-                <div className="relative z-10 h-full max-w-4xl mx-auto px-4 flex flex-col justify-end pb-12">
-                    <Link to="/#blogs" className="text-white/60 hover:text-white inline-flex items-center gap-2 mb-6 transition-colors w-fit group">
-                        <LuArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Back to Insights
-                    </Link>
-
-                    <div className="flex items-center gap-4 text-sm font-mono text-purple-300 mb-4">
-                        <span className="flex items-center gap-1 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">
-                            <LuTag size={12} /> {blog.category}
+            {/* Article Header */}
+            <article className="max-w-4xl mx-auto px-6 md:px-12 pb-32">
+                <div className="mb-12">
+                    <div className="flex flex-wrap items-center gap-6 mb-8 border-b border-white/10 pb-4">
+                        <span className="text-xs font-mono uppercase tracking-[0.3em] text-aurora-cyan">
+                            // {new Date(blog.published_date).toLocaleDateString()}
                         </span>
-                        <span className="flex items-center gap-1 text-white/50">
-                            <LuCalendar size={12} /> {new Date(blog.published_date).toLocaleDateString()}
+                        <span className="px-2 py-1 border border-white/20 text-[10px] font-mono uppercase tracking-widest rounded-full text-white/60">
+                            {blog.category}
                         </span>
                     </div>
 
-                    <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-6 text-white drop-shadow-2xl">
+                    <h1 className="text-4xl md:text-6xl font-display font-medium leading-[1.1] tracking-tight mb-8 text-white">
                         {blog.title}
                     </h1>
-                </div>
-            </div>
 
-            {/* Content Body */}
-            <div className="max-w-3xl mx-auto px-4 py-12 pb-32">
-                <div className="prose prose-invert prose-lg max-w-none">
+                    <p className="text-xl text-white/60 font-light leading-relaxed max-w-2xl">
+                        {blog.excerpt}
+                    </p>
+                </div>
+
+                {/* Thumbnail Image */}
+                {blog.thumbnail && (
+                    <div className="w-full h-[400px] md:h-[500px] overflow-hidden rounded-sm mb-16 border border-white/10 relative">
+                        <img
+                            src={getImageUrl(blog.collectionId, blog.id, blog.thumbnail)}
+                            alt={blog.title}
+                            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent opacity-20" />
+                    </div>
+                )}
+
+                {/* Content Body */}
+                <div className="prose prose-invert prose-lg max-w-none prose-headings:font-display prose-headings:font-medium prose-p:font-light prose-p:text-white/80 prose-a:text-white prose-a:no-underline prose-a:border-b prose-a:border-white/40 hover:prose-a:border-white prose-blockquote:border-aurora-purple prose-blockquote:bg-white/[0.02] prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:not-italic prose-code:text-aurora-cyan prose-code:bg-white/5 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none">
                     <div dangerouslySetInnerHTML={{ __html: blog.content }} />
                 </div>
-            </div>
+            </article>
 
             <FooterCTA />
         </div>
